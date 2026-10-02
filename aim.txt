@@ -1,0 +1,316 @@
+================================================================================
+AETHER — LUXURY HARDWARE & ACOUSTICS E-COMMERCE PLATFORM
+PROJECT SPECIFICATION, ARCHITECTURE & ROADMAP (AIM.TXT)
+================================================================================
+
+1. PROJECT OVERVIEW & VISION
+--------------------------------------------------------------------------------
+AETHER is a modern, high-performance, API-powered e-commerce storefront for
+precision-engineered personal computing and acoustic hardware (flagship 
+smartphones, studio planar magnetic headphones, minimalist smart wearables, 
+and wireless soundboxes).
+
+The platform is designed to be enterprise production-grade, secure, and resilient:
+- Fast, rich user interface with responsive micro-animations and zero-layout shifts.
+- Dual authentication: One-click Google Cloud Console OAuth 2.0 AND traditional
+  Email & Password credentials signup/login.
+- Robust database persistence via Supabase / PostgreSQL with comprehensive audit 
+  logging (activity_logs, order_timeline, email_logs, inventory_ledger).
+- Automated transactional email receipts and courier dispatch notifications via 
+  Mailgun REST API.
+- Customer Self-Service Portal (/account) for profiles, addresses, security, and reviews.
+- Executive Admin & Staff Control Terminal (/admin) for live revenue metrics, 
+  order fulfillment, catalog stock adjustments with inventory ledger, and coupon campaigns.
+- Native resilience: works seamlessly with local storage/memory fallback in 
+  development before API keys are connected, and automatically syncs to live 
+  cloud databases once keys are configured.
+
+
+2. TECHNOLOGY STACK
+--------------------------------------------------------------------------------
+- Core Framework:      Next.js 15 (App Router, Server & Client Components)
+- UI Library:          React 19
+- Styling:             Modern Vanilla CSS Design System (Custom HSL color tokens,
+                       glassmorphism, dark obsidian aesthetic, responsive layouts)
+- Icons:               Lucide React
+- Database:            Supabase / PostgreSQL (Postgres 15+)
+- Client Database SDK: @supabase/supabase-js, @supabase/ssr
+- Email Service:       Mailgun Transactional API (HTML receipts & shipping notifications)
+- Authentication:      Supabase Auth + Google Cloud Console OAuth 2.0 + Email/Password
+- Visual Polish:       Canvas Confetti (order placement celebrations)
+
+
+3. WHAT WE HAVE ALREADY ACCOMPLISHED (DONE)
+--------------------------------------------------------------------------------
+[x] Architecture & Foundation:
+    - Initialized Next.js 15 App Router with React 19, TypeScript, and Vanilla CSS.
+    - Set up path aliases (@/* -> ./src/*) and modular API architecture.
+    - Standardized API response format ({ success, message, data } and { success: false, code, errors }).
+    - Sliding-window IP rate limiting with in-memory garbage collection.
+
+[x] Product Catalog & Shopping Experience:
+    - Pre-seeded 6 flagship hardware products with technical specs, ratings,
+      and high-definition photography.
+    - Real-time catalog filtering by category (Smartphones, Computing, Audiophile,
+      Wearables, Acoustics).
+    - Real-time instant search across product names, categories, and descriptions.
+    - Product Quick-View modal with full feature lists, stock indicators, and direct
+      add-to-bag controls.
+
+[x] Interactive Shopping Cart Drawer:
+    - Slide-over cart drawer with animated transitions and backdrop blur.
+    - Real-time item quantity adjustment and deletion.
+    - Dynamic Free Express Shipping meter ($150 unlock threshold).
+    - Promo Code Engine supporting promo codes (e.g. 'WELCOME10' for 10% off,
+      'TECH20' for 20% off).
+    - Real-time Subtotal, Tax (8%), Shipping, and Total calculations.
+
+[x] Checkout Page (/checkout):
+    - Modern Web Guidance compliance:
+      * Standard form elements with semantic inputs (type="email", type="tel").
+      * Autofill support (autocomplete="shipping address-line1", autocomplete="cc-number",
+        inputmode="numeric", cc-exp, cc-csc).
+    - One-Click 'Auto-Fill Demo Checkout Data' button for lightning-fast testing.
+    - Multi-payment options: Credit Card and Wire/Bank Transfer.
+    - Live sticky order summary breakdown.
+    - Form submission calls the hardened server API at /api/checkout.
+
+[x] Order Confirmation & Receipt (/order-confirmation):
+    - Celebratory confetti particle explosion upon successful placement.
+    - Displays unique Order Reference number (#AETH-XXXXXX).
+    - HMAC-SHA256 guest token verification to eliminate IDOR risks.
+    - Real-time badge verifying Mailgun email dispatch status.
+    - Interactive 4-step fulfillment pipeline (Confirmed -> Inspection -> 
+      Packing -> Dispatched).
+    - Complete itemized printable receipt.
+
+[x] Customer Self-Service Portal (/account):
+    - Unified layout with dedicated sidebar navigation across account modules:
+      * /account: Overview dashboard with profile snapshot, active orders, and quick links.
+      * /account/profile: Edit full name, contact phone, avatar, and view linked identity.
+      * /account/addresses: Address book manager (create shipping/billing addresses, 
+        set default destination, delete address).
+      * /account/orders: Complete customer order history with status badges, line items, 
+        and direct receipt links.
+      * /account/security: High-entropy password updates with dynamic strength meter,
+        connected Google OAuth provider indicators, and immutable session audit logs.
+      * /account/reviews: Author hardware reviews (1-5 star ratings, title, commentary,
+        verified buyer status) with full submission history.
+
+[x] Executive Admin & Staff Control Terminal (/admin):
+    - Strict role authorization guard (requires role === 'admin' or role === 'staff').
+    - One-click demo administrator switcher for instant evaluation in development mode.
+    - /admin (Executive Metrics):
+      * Live Gross Merchandise Value (GMV), Total Order Count, Pending Fulfillment Count,
+        and Low-Stock Warnings.
+      * Fast Dispatch Queue and cloud infrastructure telemetry.
+    - /admin/orders (Fulfillment Pipeline):
+      * Search and filter orders by status (all, confirmed, processing, shipped, delivered, cancelled).
+      * Inspect Drawer: Detailed line items breakdown, customer address, carrier selection
+        (FedEx Priority, DHL Express, UPS Worldwide), tracking number assignment, and internal notes.
+      * Status adjustments automatically write to order_timeline and trigger customer email.
+    - /admin/products (Hardware Catalog & Stock):
+      * Real-time warehouse inventory adjustments and unit price updates.
+      * Automatic inventory_ledger logging with reason tracking.
+    - /admin/coupons (Campaign Engine):
+      * List active promo campaigns with redemption tracking.
+      * Create new percentage or fixed discount coupons with minimum order thresholds,
+        usage caps, and expiry dates.
+    - /admin/logs (Compliance & Audit Feed):
+      * System-wide audit log telemetry filterable by action type (admin, auth, order, checkout).
+
+[x] Dual Authentication System:
+    - Google Cloud Console OAuth 2.0 Web Client integration.
+    - Email & Password Signup and Signin tabs with validation.
+    - 1-Click Instant Demo Accounts (Alex Vance - Customer, Aether Admin - Staff)
+      for zero-latency preview.
+    - Session persistence and header profile dropdown with avatar, portal links, and signout.
+
+[x] Enterprise Database Architecture (supabase/schema.sql):
+    - 19 comprehensive tables and sections:
+      1. profiles (linked to auth.users with auto-creation trigger)
+      2. customer_addresses (shipping & billing address books)
+      3. categories (taxonomy with slugs and display ordering)
+      4. products (master catalog with SKUs, MSRP, cost, and stock)
+      5. product_variants (SKU variations for colors, sizes, storage)
+      6. discount_coupons (promo engine with usage limits & dates)
+      7. orders (master transaction orders)
+      8. order_items (line items capturing pricing at purchase)
+      9. order_timeline (audit log of order status progress)
+      10. email_logs (Mailgun transactional dispatch audit log)
+      11. inventory_ledger (stock deductions and restock tracking)
+      12. product_reviews (ratings, reviews, verified buyers)
+      13. activity_logs (production security & user action audit log)
+      14. B-Tree performance indexes on all key fields
+      15. Production Row-Level Security (RLS) policies
+      16. Automatic updated_at timestamp triggers
+      17. Pre-seeded initial data (categories, products, coupons)
+
+[x] Mailgun Email Integration:
+    - Responsive HTML receipt template matching brand aesthetic.
+    - Dispatch notification email with tracking number and courier details.
+    - Fallback simulation mode that logs email dispatches when API keys
+      are pending so the app never crashes.
+    - Test Email Dispatcher tool in the UI (/setup) to send test emails.
+
+[x] Production Health Diagnostic Dashboard (/setup):
+    - Live health checks for Supabase, Mailgun, and Google Auth.
+    - Interactive one-click schema copy button.
+    - Interactive live Mailgun testing form.
+
+[x] Paystack Payment Integration:
+    - Official Paystack integration via `src/lib/paystack.ts`.
+    - Server-side transaction initialization (`/api/checkout` -> `https://api.paystack.co/transaction/initialize`).
+    - Multi-channel support: Visa, Mastercard, Verve, Apple Pay, Bank Transfer, and USSD.
+    - Transaction verification endpoint at `/api/paystack/verify?reference=...`.
+    - Secure HMAC-SHA512 webhook handler at `/api/webhooks/paystack` for idempotent charge.success processing.
+    - Real-time Paystack verification card on `/order-confirmation` page.
+    - Development simulation mode when live `PAYSTACK_SECRET_KEY` is not yet configured.
+
+[x] Transactional Email System on Every Important Event:
+    - Order Confirmation Receipt email on order placement & payment verification.
+    - Order Status Update email on status transitions (processing, delivered, cancelled).
+    - Shipping Dispatch email with live FedEx courier tracking numbers and estimated delivery date.
+    - Security Alert email dispatched immediately when an account password is changed.
+    - Mailgun REST API integration with graceful simulation mode and audit logging in `email_logs`.
+
+[x] Production Clean UI (Strict Demo Isolation):
+    - All demo buttons, demo accounts, and auto-fill buttons removed from public storefront,
+      checkout (`/checkout`), and customer portal (`/account`).
+    - Demo helpers strictly isolated to `/admin` layout for internal operations staff & reviewers.
+
+[x] Full Documentation:
+    - SETUP_GUIDE.md detailing Google Cloud Console redirect URIs, Supabase
+      configuration, Mailgun setup, and Paystack integration keys.
+    - README.md comprehensive project manual.
+
+
+4. ADVANCED ROADMAP EXTENSIONS (COMPLETED)
+--------------------------------------------------------------------------------
+[x] Supabase Webhooks & Real-time Subscriptions:
+    - Supabase Realtime channel on 'orders' table active in `/order-confirmation` and
+      `/account/orders` to live-update customer's fulfillment status without refreshing.
+    - Incoming Mailgun Webhook listener (`/api/webhooks/mailgun`) with HMAC SHA256
+      signature verification to track email deliveries, opens, clicks, and bounces into `email_logs`.
+
+[x] Two-Factor Authentication (2FA / TOTP):
+    - RFC 6238 TOTP engine implemented in `src/lib/totp.ts` with Base32 secret generation,
+      drift-tolerant token verification, and 8 emergency backup recovery codes.
+    - Dedicated interactive 2FA setup card in `/account/security` with 1-click activation,
+      authenticator setup instructions, and `/api/account/security/2fa` endpoints.
+
+[x] Advanced Search & Faceting:
+    - Interactive Price Range slider ($100 - $2500+ / formatted store currency) on storefront.
+    - Hardware material facet filters (Aerospace Titanium, Sandstone Ceramic, Anodized Aluminum, Pure Beryllium).
+    - In-stock warehouse availability filter toggle with active filter chip counters and 1-click reset.
+    - Multi-criterion sorting by Price (Low to High, High to Low), Customer Rating, and Popularity/Newest.
+
+
+
+5. PROJECT DIRECTORY MAP (FOR DEVELOPERS & AI AGENTS)
+--------------------------------------------------------------------------------
+/Users/kelvin/Desktop/hng/
+├── aim.txt                     <-- This master plan & architecture document
+├── SETUP_GUIDE.md              <-- Step-by-step credentials and deployment guide
+├── package.json                <-- Project scripts and npm dependencies
+├── tsconfig.json               <-- TypeScript configuration with @/* path alias
+├── next.config.mjs             <-- Next.js build configuration
+├── .env.example                <-- Documented environment variable template
+├── .env.local                  <-- Active local credentials
+│
+├── supabase/
+│   └── schema.sql              <-- Complete 19-section PostgreSQL enterprise schema
+│
+├── public/
+│   └── assets/images/          <-- Hardware photography & brand media
+│
+└── src/
+    ├── lib/
+    │   ├── supabase.ts         <-- Supabase browser and server clients
+    │   ├── server-auth.ts      <-- Cookie/token session verification, roles, & guest HMAC
+    │   ├── api-response.ts     <-- Standardized API success and error envelopes
+    │   ├── rate-limit.ts       <-- Sliding window IP rate limiter
+    │   ├── validation.ts       <-- Server-side payload validation schemas
+    │   ├── mailgun.ts          <-- Mailgun REST client (receipts & shipping dispatch)
+    │   ├── activity-logger.ts  <-- Production audit and user activity logger
+    │   ├── products-data.ts    <-- Catalog types and canonical product data
+    │   └── orders-store.ts     <-- Shared zero-config development fallback store
+    │
+    ├── context/
+    │   ├── CartContext.tsx     <-- Shopping cart state, promo engine, & math
+    │   └── AuthContext.tsx     <-- Google OAuth & Email/Password credentials & roles
+    │
+    ├── components/
+    │   ├── Header.tsx          <-- Brand navigation, cart counter, portal links & auth
+    │   ├── Footer.tsx          <-- Store links, warranties, & tech stack badges
+    │   ├── CartDrawer.tsx      <-- Slide-in cart, shipping meter, & checkout CTA
+    │   ├── ProductCard.tsx     <-- Catalog cards with hover actions & ratings
+    │   ├── ProductQuickView.tsx<-- Deep hardware specification dialog
+    │   └── AuthModal.tsx       <-- Dual Google OAuth & Credentials modal
+    │
+    └── app/
+        ├── layout.tsx          <-- Root layout wrapping Cart & Auth providers
+        ├── globals.css         <-- Modern Vanilla CSS luxury design system
+        ├── page.tsx            <-- Storefront homepage, hero, & filtered catalog
+        ├── checkout/page.tsx   <-- Modern Web Guidance compliant checkout flow
+        ├── order-confirmation/ <-- Celebratory receipt & Mailgun verification
+        ├── orders/page.tsx     <-- Customer orders search & history lookup
+        ├── setup/page.tsx      <-- API health dashboard & interactive Mailgun tester
+        │
+        ├── account/            <-- Customer Portal
+        │   ├── layout.tsx      <-- Customer sidebar navigation
+        │   ├── page.tsx        <-- Account overview dashboard
+        │   ├── profile/        <-- Profile details & contact preferences
+        │   ├── addresses/      <-- Shipping & billing address book manager
+        │   ├── orders/         <-- Customer order tracking & receipts
+        │   ├── security/       <-- Password update & session audit trail
+        │   └── reviews/        <-- Product rating & reviews submission
+        │
+        ├── admin/              <-- Operations & Staff Portal
+        │   ├── layout.tsx      <-- Role guard & operations navigation
+        │   ├── page.tsx        <-- Executive Metrics & Telemetry dashboard
+        │   ├── orders/         <-- Order fulfillment & courier tracking dispatch
+        │   ├── products/       <-- Hardware catalog & inventory stock editor
+        │   ├── coupons/        <-- Promo campaigns & discount codes manager
+        │   └── logs/           <-- Immutable system audit log viewer
+        │
+        └── api/
+            ├── account/
+            │   ├── profile/    <-- GET & PUT customer profile
+            │   ├── addresses/  <-- GET, POST, DELETE saved addresses
+            │   ├── security/   <-- POST password change & security audit
+            │   └── reviews/    <-- GET & POST customer product reviews
+            ├── admin/
+            │   ├── metrics/    <-- GET executive metrics & revenue
+            │   ├── orders/     <-- GET all orders with filters & search
+            │   ├── orders/[id] <-- GET & PATCH fulfillment status, carrier, tracking
+            │   ├── products/   <-- GET & PATCH stock level & price (with ledger)
+            │   └── coupons/    <-- GET, POST, DELETE promo codes
+            ├── products/       <-- GET & POST catalog items
+            ├── checkout/       <-- Order validation, DB insert, & Mailgun dispatch
+            ├── orders/         <-- Customer order history queries
+            ├── orders/[id]/    <-- Single order receipt retrieval (IDOR protected)
+            ├── email/test/     <-- Live Mailgun test dispatcher
+            ├── system-status/  <-- Real-time cloud credentials diagnostics
+            └── activity-log/   <-- Activity & audit log recording and query endpoint
+
+
+6. INSTRUCTIONS FOR ANY DEVELOPER OR AI AGENT READING THIS
+--------------------------------------------------------------------------------
+1. To start the app locally:
+   run: `npm run dev` (running at http://localhost:3000)
+
+2. To build and validate types across all 33 routes:
+   run: `npm run build`
+
+3. The app is completely non-breaking:
+   Even if the user has not added their Supabase, Google, or Mailgun keys, the 
+   store functions smoothly with mock/local fallbacks. Once `.env.local` keys 
+   are added, it automatically switches to live cloud mode.
+
+4. To set up Supabase:
+   Copy [`supabase/schema.sql`] into Supabase SQL Editor and execute.
+
+===============================================================================
+END OF AIM.TXT
+===============================================================================

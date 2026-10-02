@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AETHER — Authentic Electronics with Trusted Quality</title>
+  <meta name="description" content="Authentic electronics with trusted quality. Reliable devices from trusted brands with safe and simple checkout. Explore smartphones, watches, headphones, and more.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <div class="announcement-bar" id="announcementBar">
+    <div class="announcement-content">
+      <span class="badge-pulse"></span>
+      <span>Complimentary express insured delivery on orders over $150</span>
+      <span class="announcement-dot">•</span>
+      <span class="announcement-link">30-day risk-free return trial</span>
+    </div>
+    <button class="announcement-close" id="closeAnnouncement" aria-label="Close Announcement">&times;</button>
+  </div>
+
+  <!-- Navigation Bar -->
+  <header class="site-header" id="siteHeader">
+    <div class="header-container">
+      <!-- Logo -->
+      <a href="#" class="brand-logo" id="brandLogo">
+        <span class="logo-symbol">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+            <path d="M2 12h20"></path>
+          </svg>
+        </span>
+        <span class="logo-text">AETHER</span>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="main-navigation" aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li><a href="#hero-section" class="nav-link active">Home</a></li>
+          <li><a href="#picks-section" class="nav-link">Top Tech</a></li>
+          <li><a href="#category-section" class="nav-link">Categories</a></li>
+          <li><a href="#recent-section" class="nav-link">Recently Added</a></li>
+          <li><a href="#faq-section" class="nav-link">FAQ</a></li>
+        </ul>
+      </nav>
+
+      <!-- Right Header Actions -->
+      <div class="header-actions">
+        <!-- Currency Selector -->
+        <div class="currency-select-wrapper">
+          <select id="currencySelector" class="currency-select" aria-label="Currency Selector">
+            <option value="USD">USD ($)</option>
+            <option value="EUR">EUR (€)</option>
+            <option value="GBP">GBP (£)</option>
+          </select>
+        </div>
+
+        <!-- Search Trigger -->
+        <button class="action-btn" id="searchTriggerBtn" aria-label="Search products" title="Search">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+
+        <!-- Wishlist Trigger -->
+        <button class="action-btn" id="wishlistTriggerBtn" aria-label="Wishlist" title="Wishlist">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+          <span class="action-badge" id="wishlistCount">0</span>
+        </button>
+
+        <!-- Cart Trigger Button -->
+        <button class="cart-trigger-btn" id="cartTriggerBtn" aria-label="Open Cart">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span class="cart-label">Cart</span>
+          <span class="cart-count-pill" id="cartCount">0</span>
+        </button>
+
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle mobile menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Dropdown Navigation -->
+    <div class="mobile-nav-drawer" id="mobileNavDrawer">
+      <ul class="mobile-nav-links">
+        <li><a href="#hero-section" class="mobile-nav-link">Home</a></li>
+        <li><a href="#picks-section" class="mobile-nav-link">Top Tech</a></li>
+        <li><a href="#category-section" class="mobile-nav-link">Categories</a></li>
+        <li><a href="#recent-section" class="mobile-nav-link">Recently Added</a></li>
+        <li><a href="#faq-section" class="mobile-nav-link">FAQ</a></li>
+      </ul>
+      <div class="mobile-nav-footer">
+        <p>Curated authentic electronics with international warranty.</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Global Search Overlay Modal -->
+  <div class="search-modal-backdrop" id="searchModal" aria-hidden="true">
+    <div class="search-modal-content">
+      <div class="search-input-header">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="globalSearchInput" placeholder="Search phones, watches, headphones, laptops..." autocomplete="off">
+        <button class="search-close-btn" id="closeSearchBtn" aria-label="Close search">&times;</button>
+      </div>
+      <div class="search-results-container" id="searchResultsContainer">
+        <div class="search-popular-tags">
+          <span class="tag-title">Popular:</span>
+          <button class="search-tag-chip" data-query="Smartwatch">Smartwatch</button>
+          <button class="search-tag-chip" data-query="Headphone">Headphone</button>
+          <button class="search-tag-chip" data-query="Smartphone">Smartphone</button>
+          <button class="search-tag-chip" data-query="Speaker">Speaker</button>
+          <button class="search-tag-chip" data-query="Laptop">Laptop</button>
+        </div>
+        <div class="search-dynamic-results" id="searchDynamicResults">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <!-- SECTION 1: HERO & AUTHENTIC ELECTRONICS GRID (IMAGE 3) -->
+    <section class="section hero-grid-section" id="hero-section">
+      <div class="container">
+        <!-- Header row -->
+        <div class="hero-top-row">
+          <div class="hero-title-col">
+            <h1 class="hero-title">Authentic electronics with trusted quality</h1>
+          </div>
+          <div class="hero-sub-col">
+            <p class="hero-subtitle">Reliable devices from trusted brands with safe and simple checkout.</p>
+            <a href="#picks-section" class="pill-btn pill-btn-black">
+              <span>Know more</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- 5-Card Layout: 2 left cards, 1 center hero card, 2 right cards (Exact match to screenshot 3) -->
+        <div class="feature-showcase-grid">
+          <!-- Left Column Cards -->
+          <div class="feature-col-left">
+            <!-- Card 1: Secure checkout -->
+            <div class="feature-card">
+              <div class="feature-icon-bubble">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+              </div>
+              <div class="feature-text">
+                <h3 class="feature-title">Secure checkout</h3>
+                <p class="feature-desc">Safe and encrypted transactions.</p>
+              </div>
+            </div>
+
+            <!-- Card 2: Customer support -->
+            <div class="feature-card">
+              <div class="feature-icon-bubble">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                  <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+                </svg>
+              </div>
+              <div class="feature-text">
+                <h3 class="feature-title">Customer support</h3>
+                <p class="feature-desc">Responsive and knowledgeable</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Center Showcase Card -->
+          <div class="feature-center-card">
+            <div class="center-image-wrapper">
+              <img src="assets/images/hero_gadgets.jpg" alt="Authentic electronics hero collection" class="center-showcase-img" loading="eager">
+              <div class="center-badge-overlay">
+                <span class="curated-badge">Verified Authentic 2026 Collection</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column Cards -->
+          <div class="feature-col-right">
+            <!-- Card 3: Reliable delivery -->
+            <div class="feature-card">
+              <div class="feature-icon-bubble">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="1" y="3" width="15" height="13"></rect>
+                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                  <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                  <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                </svg>
+              </div>
+              <div class="feature-text">
+                <h3 class="feature-title">Reliable delivery</h3>
+                <p class="feature-desc">Fast and trackable shipping.</p>
+              </div>
+            </div>
+
+            <!-- Card 4: On time delivery -->
+            <div class="feature-card">
+              <div class="feature-icon-bubble">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              </div>
+              <div class="feature-text">
+                <h3 class="feature-title">On time delivery</h3>
+                <p class="feature-desc">Responsive and knowledgeable</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: HELPING YOU PICK SMARTER TECH (IMAGE 5) -->
+    <section class="section smarter-tech-section" id="picks-section">
+      <div class="container">
+        <!-- Header with Filter Tabs -->
+        <div class="section-header-flex">
+          <h2 class="section-title">Helping you pick smarter tech.</h2>
+          <div class="filter-tab-group" role="tablist">
+            <button class="filter-tab-btn" data-filter="bestseller" role="tab">Best seller</button>
+            <span class="tab-divider">|</span>
+            <button class="filter-tab-btn active" data-filter="trending" role="tab">Trending now</button>
+            <button class="filter-tab-btn" data-filter="featured" role="tab">Featured</button>
+          </div>
+        </div>
+
+        <!-- 3 Product Cards Grid (Matches Image 5: Watch Cream, Nordic Speaker, Geometric Headphones) -->
+        <div class="product-cards-grid" id="smartTechGrid">
+          <!-- Card 1: Watch Cream -->
+          <div class="product-display-card" data-product-id="prod-watch-cream">
+            <div class="product-image-container">
+              <img src="assets/images/watch_cream.jpg" alt="Horizon Series S Smartwatch in Sand Cream" class="product-card-img" loading="lazy">
+              <button class="card-wishlist-toggle" aria-label="Add to wishlist" data-product-id="prod-watch-cream">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
+              <div class="product-overlay-actions">
+                <button class="quick-view-btn" data-product-id="prod-watch-cream">Quick View</button>
+              </div>
+            </div>
+            <div class="product-card-meta">
+              <div class="meta-top">
+                <span class="product-category-tag">Wearable</span>
+                <span class="product-rating">★ 4.9</span>
+              </div>
+              <h3 class="product-title">Horizon Minimalist Smart Watch</h3>
+              <p class="product-subtitle">Sandstone Ceramic Case • 12/9/3/6 Dial</p>
+              <div class="meta-bottom">
+                <span class="product-price" data-price="289">$289.00</span>
+                <button class="add-to-cart-pill-btn" data-product-id="prod-watch-cream">
+                  <span>Add to cart</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: Nordic Speaker -->
+          <div class="product-display-card" data-product-id="prod-speaker-nordic">
+            <div class="product-image-container">
+              <img src="assets/images/speaker_nordic.jpg" alt="Nordic Acoustic Portable Speaker" class="product-card-img" loading="lazy">
+              <button class="card-wishlist-toggle" aria-label="Add to wishlist" data-product-id="prod-speaker-nordic">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
+              <div class="product-overlay-actions">
+                <button class="quick-view-btn" data-product-id="prod-speaker-nordic">Quick View</button>
+              </div>
+            </div>
+            <div class="product-card-meta">
+              <div class="meta-top">
+                <span class="product-category-tag">Audio</span>
+                <span class="product-rating">★ 4.8</span>
+              </div>
+              <h3 class="product-title">Nordic Soundbox Wireless Speaker</h3>
+              <p class="product-subtitle">Champagne Aluminum • Saddle Leather</p>
+              <div class="meta-bottom">
+                <span class="product-price" data-price="195">$195.00</span>
+                <button class="add-to-cart-pill-btn" data-product-id="prod-speaker-nordic">
+                  <span>Add to cart</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: Geometric Headphones -->
+          <div class="product-display-card" data-product-id="prod-headphones-geometric">
+            <div class="product-image-container">
+              <img src="assets/images/headphones_geometric.jpg" alt="Aether Prism Studio ANC Headphones" class="product-card-img" loading="lazy">
+              <button class="card-wishlist-toggle" aria-label="Add to wishlist" data-product-id="prod-headphones-geometric">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
+              <div class="product-overlay-actions">
+                <button class="quick-view-btn" data-product-id="prod-headphones-geometric">Quick View</button>
+              </div>
+            </div>
+            <div class="product-card-meta">
+              <div class="meta-top">
+                <span class="product-category-tag">Pro Audio</span>
+                <span class="product-rating">★ 5.0</span>
+              </div>
+              <h3 class="product-title">Aether Prism Geometric Studio Headphones</h3>
+              <p class="product-subtitle">Polygonal Acoustic Chambers • Brass Pivots</p>
+              <div class="meta-bottom">
+                <span class="product-price" data-price="349">$349.00</span>
+                <button class="add-to-cart-pill-btn" data-product-id="prod-headphones-geometric">
+                  <span>Add to cart</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: EXPLORE BY CATEGORY (IMAGE 4) -->
+    <section class="section explore-category-section" id="category-section">
+      <div class="container">
+        <!-- Title -->
+        <h2 class="section-title mb-large">Explore by category</h2>
+
+        <div class="category-interactive-layout">
+          <!-- Left: Big Showcase Preview Card -->
+          <div class="category-showcase-box">
+            <div class="category-preview-image-wrapper">
+              <img id="categoryPreviewImg" src="assets/images/phone_crystal.jpg" alt="Featured category device" class="category-preview-img">
+            </div>
+            <div class="category-preview-info">
+              <div class="category-meta-badge" id="categoryMetaBadge">Flagship Smartphone</div>
+              <h3 class="category-preview-title" id="categoryPreviewTitle">Aether Quantum 16 Pro</h3>
+              <p class="category-preview-desc" id="categoryPreviewDesc">Ultra-thin bezel titanium casing with 120Hz LTPO Amethyst Display and next-generation neural silicon.</p>
+              <div class="category-preview-footer">
+                <span class="category-price-tag" id="categoryPreviewPrice">$999.00</span>
+                <button class="pill-btn pill-btn-black" id="categoryActionBtn" data-product-id="prod-phone-crystal">
+                  <span>Explore Product</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Vertical Category Selection List (Matches Image 4) -->
+          <div class="category-selector-list" role="tablist">
+            <button class="category-item-btn active" data-category="smartphone" role="tab" aria-selected="true">
+              <span class="category-name">Smartphone</span>
+              <span class="category-arrow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </span>
+            </button>
+
+            <button class="category-item-btn" data-category="laptops" role="tab" aria-selected="false">
+              <span class="category-name">Laptops</span>
+              <span class="category-arrow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </span>
+            </button>
+
+            <button class="category-item-btn" data-category="headphone" role="tab" aria-selected="false">
+              <span class="category-name">Headphone</span>
+              <span class="category-arrow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </span>
+            </button>
+
+            <button class="category-item-btn" data-category="watch" role="tab" aria-selected="false">
+              <span class="category-name">Watch</span>
+              <span class="category-arrow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </span>
+            </button>
+
+            <button class="category-item-btn" data-category="speaker" role="tab" aria-selected="false">
+              <span class="category-name">Speaker</span>
+              <span class="category-arrow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: RECENTLY ADDED (IMAGE 2) -->
+    <section class="section recently-added-section" id="recent-section">
+      <div class="container">
+        <!-- Header with "View All Products ->" -->
+        <div class="section-header-flex">
+          <h2 class="section-title">Recently added</h2>
+          <button class="pill-btn pill-btn-outline" id="viewAllProductsBtn">
+            <span>View All Products</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <!-- 3 Product Cards: Watch Sport, Watch Cream, Phone Crystal (Exact match to screenshot 2) -->
+        <div class="recent-cards-grid">
+          <!-- Card 1: Sports Watch -->
+          <div class="recent-product-card" data-product-id="prod-watch-sport">
+            <div class="card-visual-frame">
+              <img src="assets/images/watch_sport.jpg" alt="Aether Pulse Pro GPS Sport Watch" class="recent-card-img" loading="lazy">
+              <button class="card-wishlist-toggle" aria-label="Add to wishlist" data-product-id="prod-watch-sport">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="recent-meta-bar">
+              <div class="recent-titles">
+                <h4 class="recent-product-title">Pulse Pro GPS Sport Watch</h4>
+                <p class="recent-product-specs">Woven Loop • BioSensor 4.0</p>
+              </div>
+              <div class="recent-price-action">
+                <span class="recent-price" data-price="220">$220.00</span>
+                <button class="pill-add-btn" data-product-id="prod-watch-sport" title="Add to Bag">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: Watch Cream -->
+          <div class="recent-product-card" data-product-id="prod-watch-cream">
+            <div class="card-visual-frame">
+              <img src="assets/images/watch_cream.jpg" alt="Horizon Series S Minimalist Smart Watch" class="recent-card-img" loading="lazy">
+              <button class="card-wishlist-toggle" aria-label="Add to wishlist" data-product-id="prod-watch-cream">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="recent-meta-bar">
+              <div class="recent-titles">
+                <h4 class="recent-product-title">Horizon Minimalist Smart Watch</h4>
+                <p class="recent-product-specs">Sand Silicone • 72h Battery</p>
+              </div>
+              <div class="recent-price-action">
+                <span class="recent-price" data-price="289">$289.00</span>
+                <button class="pill-add-btn" data-product-id="prod-watch-cream" title="Add to Bag">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: Phone Crystal -->
+          <div class="recent-product-card" data-product-id="prod-phone-crystal">
+            <div class="card-visual-frame">
+              <img src="assets/images/phone_crystal.jpg" alt="Aether Quantum 16 Pro Amethyst Smartphone" class="recent-card-img" loading="lazy">
+              <button class="card-wishlist-toggle" aria-label="Add to wishlist" data-product-id="prod-phone-crystal">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="recent-meta-bar">
+              <div class="recent-titles">
+                <h4 class="recent-product-title">Quantum 16 Pro Flagship Phone</h4>
+                <p class="recent-product-specs">Amethyst Geode • 256GB Titanium</p>
+              </div>
+              <div class="recent-price-action">
+                <span class="recent-price" data-price="999">$999.00</span>
+                <button class="pill-add-btn" data-product-id="prod-phone-crystal" title="Add to Bag">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: FREQUENTLY ASKED QUESTION (IMAGE 1) -->
+    <section class="section faq-section" id="faq-section">
+      <div class="container">
+        <div class="faq-layout">
+          <!-- Left Column: Title -->
+          <div class="faq-left-col">
+            <h2 class="faq-main-heading">Frequently<br>asked question</h2>
+          </div>
+
+          <!-- Right Column: Accordion List (Exact match to screenshot 1) -->
+          <div class="faq-accordion-list" id="faqAccordion">
+            <!-- Item 1: Open by default as in screenshot 1 -->
+            <div class="faq-item open">
+              <button class="faq-question-btn" aria-expanded="true">
+                <span class="faq-question-text">How do I place an order?</span>
+                <span class="faq-toggle-icon">
+                  <svg class="icon-minus" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  <svg class="icon-plus" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </span>
+              </button>
+              <div class="faq-answer-panel">
+                <p class="faq-answer-text">
+                  Simply browse our products, add your favorite items to the cart, and proceed to checkout. Follow the steps to enter your details and complete payment.
+                </p>
+              </div>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="faq-item">
+              <button class="faq-question-btn" aria-expanded="false">
+                <span class="faq-question-text">What payment methods do you accept?</span>
+                <span class="faq-toggle-icon">
+                  <svg class="icon-minus" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  <svg class="icon-plus" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </span>
+              </button>
+              <div class="faq-answer-panel">
+                <p class="faq-answer-text">
+                  We accept Visa, Mastercard, American Express, Apple Pay, Google Pay, PayPal, and interest-free installment payment plans via Klarna and Affirm.
+                </p>
+              </div>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="faq-item">
+              <button class="faq-question-btn" aria-expanded="false">
+                <span class="faq-question-text">Can I cancel or change my order?</span>
+                <span class="faq-toggle-icon">
+                  <svg class="icon-minus" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  <svg class="icon-plus" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </span>
+              </button>
+              <div class="faq-answer-panel">
+                <p class="faq-answer-text">
+                  Yes, you can edit or cancel orders within 2 hours of placement directly from your account page or by reaching our real-time customer care team before warehouse dispatch.
+                </p>
+              </div>
+            </div>
+
+            <!-- Item 4 -->
+            <div class="faq-item">
+              <button class="faq-question-btn" aria-expanded="false">
+                <span class="faq-question-text">How long does delivery take?</span>
+                <span class="faq-toggle-icon">
+                  <svg class="icon-minus" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  <svg class="icon-plus" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </span>
+              </button>
+              <div class="faq-answer-panel">
+                <p class="faq-answer-text">
+                  Standard delivery typically arrives in 2 to 4 business days. Priority expedited next-day delivery is available at checkout for all major metropolitan regions.
+                </p>
+              </div>
+            </div>
+
+            <!-- Item 5 -->
+            <div class="faq-item">
+              <button class="faq-question-btn" aria-expanded="false">
+                <span class="faq-question-text">Do you offer nationwide delivery?</span>
+                <span class="faq-toggle-icon">
+                  <svg class="icon-minus" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  <svg class="icon-plus" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </span>
+              </button>
+              <div class="faq-answer-panel">
+                <p class="faq-answer-text">
+                  Yes, we offer insured nationwide delivery with real-time GPS courier tracking. We also ship internationally to over 50 countries with full customs pre-clearance.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: NEWSLETTER SIGNUP -->
+    <section class="section newsletter-section">
+      <div class="container">
+        <div class="newsletter-card">
+          <div class="newsletter-content">
+            <span class="newsletter-tag">Stay in the loop</span>
+            <h3 class="newsletter-headline">Get early access to future drops & tech discounts.</h3>
+            <p class="newsletter-sub">No spam. Only curated device launches and exclusive hardware updates once a month.</p>
+            <form class="newsletter-form" id="newsletterForm">
+              <div class="newsletter-input-group">
+                <input type="email" id="newsletterEmail" placeholder="Enter your email address" required>
+                <button type="submit" class="pill-btn pill-btn-black">
+                  <span>Subscribe</span>
+                </button>
+              </div>
+              <p class="newsletter-hint">By subscribing, you agree with our Privacy Terms and warranty notifications.</p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modern Site Footer -->
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-top-grid">
+        <div class="footer-brand-col">
+          <a href="#" class="brand-logo footer-logo">
+            <span class="logo-symbol">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+                <path d="M2 12h20"></path>
+              </svg>
+            </span>
+            <span class="logo-text">AETHER</span>
+          </a>
+          <p class="footer-tagline">Authentic electronics with trusted quality and seamless checkout experiences worldwide.</p>
+          <div class="footer-trust-badges">
+            <span class="trust-badge">Official Authorized Retailer</span>
+            <span class="trust-badge">2-Year Official Warranty</span>
+          </div>
+        </div>
+
+        <div class="footer-links-col">
+          <h4 class="footer-heading">Categories</h4>
+          <ul class="footer-links">
+            <li><a href="#category-section" data-cat-link="smartphone">Smartphones</a></li>
+            <li><a href="#category-section" data-cat-link="laptops">Laptops</a></li>
+            <li><a href="#category-section" data-cat-link="headphone">Headphones</a></li>
+            <li><a href="#category-section" data-cat-link="watch">Smart Watches</a></li>
+            <li><a href="#category-section" data-cat-link="speaker">Hi-Fi Speakers</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <h4 class="footer-heading">Support</h4>
+          <ul class="footer-links">
+            <li><a href="#faq-section">Order Tracking</a></li>
+            <li><a href="#faq-section">Shipping & Returns</a></li>
+            <li><a href="#faq-section">Warranty Registration</a></li>
+            <li><a href="#faq-section">Authenticity Check</a></li>
+            <li><a href="#faq-section">Contact Concierge</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <h4 class="footer-heading">Company</h4>
+          <ul class="footer-links">
+            <li><a href="#">About Aether</a></li>
+            <li><a href="#">Sustainability</a></li>
+            <li><a href="#">Press Kit</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom-bar">
+        <p class="footer-copy">© 2026 AETHER Inc. All rights reserved. Designed with Framer aesthetic.</p>
+        <div class="footer-pay-icons">
+          <span>Apple Pay</span>
+          <span>Google Pay</span>
+          <span>Visa</span>
+          <span>Mastercard</span>
+          <span>Klarna</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Slide-Out Shopping Cart Drawer -->
+  <div class="cart-drawer-overlay" id="cartOverlay" aria-hidden="true">
+    <div class="cart-drawer-panel" id="cartDrawer">
+      <div class="cart-drawer-header">
+        <div class="cart-title-wrap">
+          <h3 class="cart-title">Your Cart</h3>
+          <span class="cart-header-count" id="cartHeaderCount">(0 items)</span>
+        </div>
+        <button class="cart-close-btn" id="closeCartBtn" aria-label="Close cart">&times;</button>
+      </div>
+
+      <!-- Free Shipping Goal Meter -->
+      <div class="shipping-progress-box">
+        <div class="shipping-progress-text" id="shippingProgressText">Add $150.00 more for Free Express Delivery</div>
+        <div class="shipping-bar-track">
+          <div class="shipping-bar-fill" id="shippingBarFill" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- Cart Items List Container -->
+      <div class="cart-items-scroll" id="cartItemsList">
+        <!-- Rendered by app.js -->
+        <div class="empty-cart-view" id="emptyCartView">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <p class="empty-title">Your cart is currently empty</p>
+          <p class="empty-desc">Discover our curated tech and find your next favorite device.</p>
+          <button class="pill-btn pill-btn-black" id="startShoppingBtn">Start Shopping</button>
+        </div>
+      </div>
+
+      <!-- Cart Drawer Footer -->
+      <div class="cart-drawer-footer" id="cartDrawerFooter">
+        <div class="cart-promo-code">
+          <input type="text" id="promoInput" placeholder="Promo code (try 'AETHER10')">
+          <button id="applyPromoBtn">Apply</button>
+        </div>
+        <div class="cart-summary-line">
+          <span>Subtotal</span>
+          <span id="cartSubtotal">$0.00</span>
+        </div>
+        <div class="cart-summary-line" id="discountLine" style="display: none;">
+          <span>Discount (10%)</span>
+          <span id="cartDiscount" class="text-green">-$0.00</span>
+        </div>
+        <div class="cart-summary-line">
+          <span>Estimated Shipping</span>
+          <span id="cartShipping">Calculated next</span>
+        </div>
+        <div class="cart-total-line">
+          <span>Total</span>
+          <span id="cartGrandTotal">$0.00</span>
+        </div>
+        <button class="checkout-submit-btn" id="proceedCheckoutBtn">
+          <span>Proceed to Checkout</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+        <p class="cart-secure-note">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          Safe & Encrypted 256-Bit SSL Checkout
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Quick View Modal -->
+  <div class="quickview-modal-backdrop" id="quickViewModal" aria-hidden="true">
+    <div class="quickview-modal-container">
+      <button class="modal-close-btn" id="closeQuickViewBtn" aria-label="Close modal">&times;</button>
+      <div class="quickview-content-grid" id="quickViewContent">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkout Success Modal -->
+  <div class="quickview-modal-backdrop" id="checkoutSuccessModal" aria-hidden="true">
+    <div class="quickview-modal-container checkout-dialog">
+      <div class="success-icon-wrap">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <h3 class="success-heading">Order Placed Successfully!</h3>
+      <p class="success-sub">Thank you for ordering with AETHER. Your confirmation code is <strong id="orderTrackingCode">#AET-89419</strong>. A tracking dispatch notice has been prepared.</p>
+      <div class="order-summary-box" id="checkoutModalSummary"></div>
+      <button class="pill-btn pill-btn-black full-width" id="closeSuccessModalBtn">Back to Store</button>
+    </div>
+  </div>
+
+  <!-- Floating Framer & Commerce Badges (As visible in screenshots!) -->
+  <div class="floating-framer-badges" aria-label="Framer badges">
+    <a href="#" class="framer-pill-badge" target="_blank" rel="noopener">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"></circle>
+        <path d="M12 2a10 10 0 0 0 0 20M2 12h20"></path>
+      </svg>
+      <span>Framer Commerce</span>
+    </a>
+    <a href="#" class="framer-pill-badge" target="_blank" rel="noopener">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M4 0h16v8h-8zM4 8h8l8 8H4zM4 16h8v8z"></path>
+      </svg>
+      <span>Made in Framer</span>
+    </a>
+  </div>
+
+  <!-- Floating Device Viewport Switcher (As seen on top-right in screenshots!) -->
+  <div class="floating-viewport-switcher" title="Device Preview Simulator">
+    <button class="vp-btn active" data-vp="desktop" aria-label="Desktop View" title="Desktop View">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+        <line x1="8" y1="21" x2="16" y2="21"></line>
+        <line x1="12" y1="17" x2="12" y2="21"></line>
+      </svg>
+    </button>
+    <button class="vp-btn" data-vp="tablet" aria-label="Tablet View" title="Tablet View">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+        <line x1="12" y1="18" x2="12.01" y2="18"></line>
+      </svg>
+    </button>
+    <button class="vp-btn" data-vp="mobile" aria-label="Mobile View" title="Mobile View">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+        <line x1="12" y1="18" x2="12.01" y2="18"></line>
+      </svg>
+    </button>
+    <div class="vp-divider"></div>
+    <button class="vp-btn" id="vpFullscreenBtn" aria-label="Toggle Fullscreen" title="Toggle Fullscreen">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 3 21 3 21 9"></polyline>
+        <polyline points="9 21 3 21 3 15"></polyline>
+        <line x1="21" y1="3" x2="14" y2="10"></line>
+        <line x1="3" y1="21" x2="10" y2="14"></line>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Floating Customer Concierge Chat Launcher (As seen on bottom-right in screenshots) -->
+  <button class="floating-chat-bubble" id="chatLauncherBtn" aria-label="Customer Support Concierge">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+    </svg>
+    <span class="chat-status-dot"></span>
+  </button>
+
+  <!-- Interactive Concierge Chat Widget Drawer -->
+  <div class="chat-widget-window" id="chatWidgetWindow" aria-hidden="true">
+    <div class="chat-window-header">
+      <div class="chat-agent-info">
+        <div class="agent-avatar">A</div>
+        <div>
+          <h4 class="agent-name">Aether Concierge</h4>
+          <span class="agent-status"><span class="green-indicator"></span> Always Active • Instant reply</span>
+        </div>
+      </div>
+      <button class="chat-window-close" id="closeChatBtn">&times;</button>
+    </div>
+    <div class="chat-messages-body" id="chatMessages">
+      <div class="chat-bubble support">
+        <p>👋 Hello! Welcome to Aether Authentic Electronics. Looking for advice on our new watches, smart audio, or smartphones?</p>
+        <span class="chat-time">Just now</span>
+      </div>
+    </div>
+    <div class="chat-quick-suggestions">
+      <button class="chat-prompt-pill" data-msg="How does delivery work?">Delivery info?</button>
+      <button class="chat-prompt-pill" data-msg="Are all devices authentic?">Authenticity check</button>
+      <button class="chat-prompt-pill" data-msg="Tell me about Horizon Watch">Horizon Watch specs</button>
+    </div>
+    <form class="chat-input-form" id="chatForm">
+      <input type="text" id="chatInputText" placeholder="Ask anything about our products..." autocomplete="off">
+      <button type="submit" aria-label="Send message">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </form>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

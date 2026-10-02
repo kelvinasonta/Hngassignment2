@@ -1,0 +1,287 @@
+export interface ProductColor {
+  name: string;
+  hex: string;
+}
+
+export interface Product {
+  id: string;
+  name: string;
+  tagline: string;
+  category: 'watch' | 'speaker' | 'headphone' | 'smartphone' | 'laptops';
+  categoryLabel: string;
+  price: number;
+  rating: number;
+  reviewsCount: number;
+  image: string;
+  gallery?: string[];
+  badge?: string;
+  description: string;
+  overview?: string;
+  materials?: string;
+  warranty?: string;
+  features: string[];
+  specs?: Record<string, string>;
+  colors?: ProductColor[];
+  stock: number;
+}
+
+export const INITIAL_PRODUCTS: Product[] = [
+  {
+    id: 'prod-watch-cream',
+    name: 'Horizon Minimalist Smart Watch',
+    tagline: 'Sandstone Ceramic Case • 12/9/3/6 Dial',
+    category: 'watch',
+    categoryLabel: 'Wearables',
+    price: 289,
+    rating: 4.9,
+    reviewsCount: 128,
+    image: '/assets/images/watch_cream.jpg',
+    gallery: [
+      '/assets/images/watch_cream.jpg',
+      '/assets/images/watch_sport.jpg',
+      '/assets/images/hero_gadgets.jpg',
+    ],
+    badge: 'Best Seller',
+    description: 'Crafted with a sand-beige hypoallergenic fluoroelastomer band and an edge-to-edge monochrome AMOLED watch face. Features 72-hour battery life, ECG heart-rate telemetry, and sapphire glass protection.',
+    overview: 'The Horizon Minimalist Smart Watch represents a pure exercise in chronological restraint. Designed for individuals who demand physiological clarity without notification fatigue, its custom monochrome micro-LED matrix renders numerals with razor-sharp contrast under direct sunlight.',
+    materials: 'High-density Sandstone Ceramic unibody, anti-reflective Sapphire Crystal lens, medical-grade hypoallergenic fluoroelastomer tactile band with Grade 5 Titanium buckle.',
+    warranty: '2-Year Global Concierge Hardware Warranty with complimentary battery health calibration.',
+    features: [
+      'Always-On High-Contrast AMOLED Display',
+      'Advanced Sleep & Heart Rhythm Telemetry',
+      'Fast Wireless Magnetic Puck Charging',
+      'Water Resistant to 50M (5 ATM)',
+    ],
+    specs: {
+      'Case Diameter': '42mm Sandstone Ceramic',
+      'Display': '1.43-inch Edge-to-Edge Monochrome AMOLED (466x466, 326 ppi)',
+      'Water Resistance': '5 ATM (50 meters ISO standard)',
+      'Battery Endurance': '72 hours continuous biometric telemetry, 14 days standby',
+      'Sensors': 'Optical PPG ECG, Dual-wavelength SpO2, Skin Temperature, 3-Axis Gyro',
+      'Connectivity': 'Bluetooth 5.3 Low Energy, NFC Contactless Pass',
+      'Weight': '38.5 grams (excluding strap)',
+    },
+    colors: [
+      { name: 'Sandstone Ceramic', hex: '#e2d7c5' },
+      { name: 'Matte Obsidian', hex: '#1c1d22' },
+      { name: 'Arctic Silver', hex: '#d9dce1' },
+    ],
+    stock: 45,
+  },
+  {
+    id: 'prod-speaker-nordic',
+    name: 'Nordic Soundbox Wireless Speaker',
+    tagline: 'Champagne Aluminum • Saddle Leather',
+    category: 'speaker',
+    categoryLabel: 'Acoustics',
+    price: 195,
+    rating: 4.8,
+    reviewsCount: 94,
+    image: '/assets/images/speaker_nordic.jpg',
+    gallery: [
+      '/assets/images/speaker_nordic.jpg',
+      '/assets/images/hero_gadgets.jpg',
+      '/assets/images/headphones_geometric.jpg',
+    ],
+    badge: 'Trending',
+    description: 'Scandinavian-engineered portable acoustic soundbox featuring a precision-perforated aluminum grille, custom full-range drivers, and a vegetable-tanned bridle leather carrying strap.',
+    overview: 'Engineered in Copenhagen with a singular mandate: reproduce acoustic timbre with effortless physical presence. Dual opposing neodymium full-range transducers coupled to a low-resonance passive bass radiator deliver room-filling sound with near-zero harmonic distortion.',
+    materials: 'CNC-milled Anodized Champagne Aluminum enclosure, vegetable-tanned full-grain bridle leather, silicone isolation dampeners.',
+    warranty: '2-Year Global Concierge Acoustic Warranty with certified driver replacement guarantee.',
+    features: [
+      'True 360-Degree Omnidirectional Sound',
+      '24-Hour Continuous Battery Life',
+      'IP67 Dust and Water Splash Proof',
+      'Multi-Room Bluetooth 5.3 Stereo Link',
+    ],
+    specs: {
+      'Transducers': 'Dual 2.5-inch Custom Neodymium Drivers + Opposing Bass Radiator',
+      'Amplification': '60W Class-D High-Efficiency Digital Amp',
+      'Frequency Response': '42Hz – 22,000Hz (±3dB)',
+      'SPL Output': '94dB SPL @ 1 meter',
+      'Battery': '5,200mAh Lithium-Ion (24 hours at moderate listening level)',
+      'Charge Time': '2.5 hours via 45W USB-C Power Delivery',
+      'Ingress Protection': 'IP67 Dust-tight & immersion up to 1 meter for 30 min',
+      'Weight': '1.18 kg',
+    },
+    colors: [
+      { name: 'Champagne Aluminum', hex: '#e8dcce' },
+      { name: 'Space Anthracite', hex: '#26282e' },
+      { name: 'Forest Olive', hex: '#48554a' },
+    ],
+    stock: 30,
+  },
+  {
+    id: 'prod-headphones-geometric',
+    name: 'Aether Prism Studio ANC Headphones',
+    tagline: 'Polygonal Acoustic Chambers • Brass Pivots',
+    category: 'headphone',
+    categoryLabel: 'Audiophile',
+    price: 349,
+    rating: 5.0,
+    reviewsCount: 210,
+    image: '/assets/images/headphones_geometric.jpg',
+    gallery: [
+      '/assets/images/headphones_geometric.jpg',
+      '/assets/images/hero_gadgets.jpg',
+      '/assets/images/speaker_nordic.jpg',
+    ],
+    badge: 'Staff Pick',
+    description: 'Sculpted with low-resonance geometric faceted earcups and champagne-gold articulated hinges. Equipped with 45mm beryllium drivers delivering studio-reference lossless audio reproduction.',
+    overview: 'The flagship audiophile reference monitor for acoustic purists. Featuring bespoke 45mm vapor-deposited pure beryllium diaphragms housed within anti-standing-wave polygonal chambers to eradicate internal acoustic reflection.',
+    materials: 'Aviation-grade Aluminum earcups, hand-stitched protein leather headband, cold-forged brass pivot pins, high-rebound memory foam cushions.',
+    warranty: '3-Year Studio Reference Warranty with complimentary earpad replacements for 24 months.',
+    features: [
+      'Hybrid Active Noise Cancellation (Up to 42dB)',
+      '45mm Custom Beryllium Diaphragms',
+      'Lossless LDAC & Qualcomm aptX HD Audio',
+      'Memory Foam Protein Leather Cushioning',
+    ],
+    specs: {
+      'Driver Type': '45mm Vapor-Deposited Pure Beryllium Dynamic Drivers',
+      'Acoustic Architecture': 'Closed-back faceted low-resonance polygonal chambers',
+      'Frequency Response': '5Hz – 54,000Hz (Hi-Res Audio Certified)',
+      'Impedance': '32 Ohms @ 1kHz',
+      'THD': '< 0.05% @ 1kHz, 100dB SPL',
+      'Noise Cancellation': 'Hybrid 4-microphone feedforward & feedback ANC (-42dB)',
+      'Wireless Codecs': 'LDAC, aptX Adaptive, aptX HD, AAC, SBC',
+      'Battery Life': '40 hours (ANC On), 55 hours (ANC Off)',
+      'Weight': '290 grams',
+    },
+    colors: [
+      { name: 'Matte Onyx & Brass', hex: '#1a1a1c' },
+      { name: 'Lunar Silver', hex: '#cfd4dc' },
+      { name: 'Cognac Leather', hex: '#6d4327' },
+    ],
+    stock: 25,
+  },
+  {
+    id: 'prod-phone-crystal',
+    name: 'Quantum 16 Pro Flagship Smartphone',
+    tagline: 'Amethyst Geode • 256GB Titanium Frame',
+    category: 'smartphone',
+    categoryLabel: 'Smartphones',
+    price: 999,
+    rating: 4.95,
+    reviewsCount: 342,
+    image: '/assets/images/phone_crystal.jpg',
+    gallery: [
+      '/assets/images/phone_crystal.jpg',
+      '/assets/images/laptop_air.jpg',
+      '/assets/images/hero_gadgets.jpg',
+    ],
+    badge: 'Flagship',
+    description: 'The pinnacle of handheld engineering with an aerospace-grade titanium chassis and a vivid 6.7-inch 120Hz LTPO OLED display depicting hyper-detailed mineral crystals.',
+    overview: 'A monolithic fusion of raw computational velocity and natural geological beauty. Built inside a forged Grade 5 Titanium exoskeleton with diamond-cut micro-radiused chamfers, housing an edge-to-edge LTPO 3.0 variable refresh display.',
+    materials: 'Grade 5 Aerospace Titanium chassis, micro-etched ceramic shield front glass, mineral frosted back pane.',
+    warranty: '2-Year Global Hardware Warranty with express replacement dispatch worldwide.',
+    features: [
+      '6.7-inch 120Hz ProMotion LTPO OLED Screen',
+      'Next-Gen 3nm Neural Processing Bionic Chip',
+      'Triple Optical Camera System with Periscope Zoom',
+      '256GB Ultra-Fast NVMe Storage & IP68 Rating',
+    ],
+    specs: {
+      'Processor': 'Aether A18 Pro 3nm (6-Core CPU, 6-Core GPU, 16-Core NPU)',
+      'Display': '6.7" Super Retina XDR LTPO OLED, 120Hz, 2,500 nits peak outdoor brightness',
+      'Camera System': '48MP Wide (f/1.6, Sensor-Shift OIS) + 48MP Ultra-Wide + 12MP 5x Periscope Telephoto',
+      'Storage': '256GB High-Bandwidth NVMe',
+      'Battery': '4,650mAh with 35W wired and 25W MagCharge wireless',
+      'Security': '3D Structured-Light Facial Recognition + In-Display Ultrasonic Sensor',
+      'Dimensions': '159.9 x 76.7 x 8.25 mm',
+      'Weight': '221 grams',
+    },
+    colors: [
+      { name: 'Amethyst Titanium', hex: '#5f4b7a' },
+      { name: 'Natural Titanium', hex: '#9a948d' },
+      { name: 'Black Titanium', hex: '#232427' },
+    ],
+    stock: 15,
+  },
+  {
+    id: 'prod-watch-sport',
+    name: 'Pulse Pro GPS Sport Watch',
+    tagline: 'Woven Sport Loop • BioSensor 4.0',
+    category: 'watch',
+    categoryLabel: 'Wearables',
+    price: 220,
+    rating: 4.85,
+    reviewsCount: 167,
+    image: '/assets/images/watch_sport.jpg',
+    gallery: [
+      '/assets/images/watch_sport.jpg',
+      '/assets/images/watch_cream.jpg',
+      '/assets/images/hero_gadgets.jpg',
+    ],
+    badge: 'New Release',
+    description: 'Engineered for endurance athletics and nocturnal biometric recovery. Features a breathable tactical woven loop, multi-band GNSS positioning, and real-time athletic stamina meters.',
+    overview: 'Conceived for high-altitude trail runners, maritime sailors, and tactical endurance athletes. The lightweight carbon-infused polymer chassis withstands extreme temperature shocks from -20°C to +55°C without compromising optical sensor alignment.',
+    materials: 'Carbon-reinforced polymer case, diamond-like carbon (DLC) stainless steel bezel, moisture-wicking dual-layer nylon loop.',
+    warranty: '2-Year Extreme Endurance Guarantee covering all athletic training conditions.',
+    features: [
+      'Dual-Frequency Multi-Band Satellite GPS',
+      'Nightly Recharge & VO2 Max Recovery Scoring',
+      'Ultra-Durable Matte Black DLC Coated Bezel',
+      'Up to 14 Days Battery in Endurance Mode',
+    ],
+    specs: {
+      'Case': '46mm Carbon-Infused Polymer with DLC Titanium Bezel',
+      'Display': '1.3-inch Transflective Memory-in-Pixel (MIP) sunlight visible',
+      'Satellite Tracking': 'Multi-Band GNSS (GPS, GLONASS, Galileo, BeiDou, QZSS)',
+      'Water Rating': '10 ATM (100 meters dive safe)',
+      'Battery': '14 days smartwatch mode, 38 hours continuous full-system GPS',
+      'Sensors': 'Optical heart rate, pulse oximeter, barometric altimeter, 3D compass',
+      'Weight': '52 grams',
+    },
+    colors: [
+      { name: 'Tactical Stealth Black', hex: '#161719' },
+      { name: 'Signal Orange', hex: '#ea580c' },
+      { name: 'Alpine Frost', hex: '#e2e8f0' },
+    ],
+    stock: 50,
+  },
+  {
+    id: 'prod-laptop-air',
+    name: 'Aether Book Ultra 15',
+    tagline: 'Liquid Retina XDR • Silicon Pro Chip',
+    category: 'laptops',
+    categoryLabel: 'Computing',
+    price: 1349,
+    rating: 4.98,
+    reviewsCount: 88,
+    image: '/assets/images/laptop_air.jpg',
+    gallery: [
+      '/assets/images/laptop_air.jpg',
+      '/assets/images/phone_crystal.jpg',
+      '/assets/images/hero_gadgets.jpg',
+    ],
+    badge: 'Pro Performance',
+    description: 'Razor-thin anodized aluminum unibody weighing only 1.2kg. Delivers ground-breaking speed, 18 hours of real-world battery life, and a color-calibrated 1000-nit HDR display.',
+    overview: 'The definitive architectural workstation for computational design, audio mastering, and high-throughput development. Built around custom silicon architecture with 12 CPU cores, 18 GPU cores, and unified low-latency memory.',
+    materials: '100% Recycled Aerospace 6000-Series Aluminum unibody, chemically etched matte trackpad, laser-perforated acoustic micro-grilles.',
+    warranty: '3-Year Enterprise Care with 24/7 dedicated hardware concierge.',
+    features: [
+      '15.3-inch Liquid Retina Display with True Tone',
+      'Unified High-Bandwidth Memory Architecture',
+      'All-Day 18-Hour Battery with MagSafe Fast Charge',
+      'Six-Speaker Sound System with Spatial Audio',
+    ],
+    specs: {
+      'Silicon': 'Aether M3 Max (12-Core CPU, 18-Core GPU, 16-Core Neural Engine)',
+      'Display': '15.3-inch Liquid Retina IPS, 2880x1864 native resolution at 224 ppi, 1000 nits peak',
+      'Memory': '36GB Unified LPDDR5X (150GB/s bandwidth)',
+      'Storage': '512GB PCIe 4.0 NVMe SSD (7,400MB/s read)',
+      'Ports': '3x Thunderbolt 4 / USB4, HDMI 2.1, SDXC card slot, MagConnect 3',
+      'Audio': 'Six-speaker sound system with force-cancelling woofers, Dolby Atmos',
+      'Battery': '70-watt-hour lithium-polymer, up to 18 hours wireless web',
+      'Dimensions': '34.04 x 23.76 x 1.15 cm',
+      'Weight': '1.24 kg',
+    },
+    colors: [
+      { name: 'Space Black Anodized', hex: '#1e1f23' },
+      { name: 'Silver Unibody', hex: '#d1d5db' },
+      { name: 'Midnight Deep Blue', hex: '#172033' },
+    ],
+    stock: 20,
+  },
+];
