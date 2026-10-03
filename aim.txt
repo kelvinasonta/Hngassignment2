@@ -303,14 +303,22 @@ The platform is designed to be enterprise production-grade, secure, and resilien
 2. To build and validate types across all 33 routes:
    run: `npm run build`
 
-3. The app is completely non-breaking:
+3. To start the Expo Mobile Companion App:
+   run: `cd /Users/kelvin/Desktop/aether-mobile && npm start`
+
+4. Complete AI Rebuild & Architecture Blueprint:
+   See [`AI_MASTER_BLUEPRINT.md`] in the root folder for full database schemas,
+   all 24 REST API endpoints, Paystack & Resend configurations, and architecture.
+
+5. The app is completely non-breaking:
    Even if the user has not added their Supabase, Google, or Mailgun keys, the 
    store functions smoothly with mock/local fallbacks. Once `.env.local` keys 
    are added, it automatically switches to live cloud mode.
 
-4. To set up Supabase:
+6. To set up Supabase:
    Copy [`supabase/schema.sql`] into Supabase SQL Editor and execute.
 
 ===============================================================================
 END OF AIM.TXT
 ===============================================================================
+
