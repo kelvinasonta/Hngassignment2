@@ -370,12 +370,10 @@ export async function POST(request: Request) {
     globalOrdersStore.set(orderId, orderRecord);
     globalOrdersStore.set(orderNumber, orderRecord);
 
-    // 9. Send Confirmation Email via Mailgun (For immediate payment methods; Paystack triggers on verified webhook/callback)
-    let emailResult: any = { success: false, message: 'Deferred until Paystack payment verification' };
-    if (!isPaystack) {
-      emailResult = await sendOrderConfirmationEmail({
-        orderNumber,
-        customerName,
+    // 9. Send Confirmation Email via Resend
+    let emailResult = await sendOrderConfirmationEmail({
+      orderNumber,
+      customerName,
         customerEmail,
         items: validatedItems,
         subtotal,
@@ -419,7 +417,6 @@ export async function POST(request: Request) {
           // non-blocking
         }
       }
-    }
 
     // 11. Return standardized success response
     return apiSuccess(

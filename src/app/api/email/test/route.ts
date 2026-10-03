@@ -4,7 +4,7 @@ import { sendOrderConfirmationEmail, isResendConfigured } from '@/lib/resend';
 export async function POST(request: Request) {
   try {
     const body = await request.json().catch(() => ({}));
-    const recipientEmail = body.email || 'customer@example.com';
+    const recipientEmail = (body.email || 'keviloq@gmail.com').trim();
 
     const testData = {
       orderNumber: `AETH-${Math.floor(1000 + Math.random() * 9000)}`,

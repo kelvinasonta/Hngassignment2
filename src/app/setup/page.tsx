@@ -21,7 +21,7 @@ import {
 export default function SetupDashboardPage() {
   const [status, setStatus] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [testEmail, setTestEmail] = useState('');
+  const [testEmail, setTestEmail] = useState('keviloq@gmail.com');
   const [testSending, setTestSending] = useState(false);
   const [testResult, setTestResult] = useState<any>(null);
   const [sqlCopied, setSqlCopied] = useState(false);
