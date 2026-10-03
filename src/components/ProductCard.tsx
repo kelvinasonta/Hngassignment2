@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { Product } from '@/lib/products-data';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
@@ -27,15 +28,16 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
 
   const handleWishlistToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     toggleWishlist(product);
   };
 
   return (
     <article className="product-card">
-      <div
+      <Link
+        href={`/products/${product.id}`}
         className="card-media-wrap"
-        onClick={() => onQuickView(product)}
-        style={{ cursor: 'pointer', position: 'relative' }}
+        style={{ cursor: 'pointer', position: 'relative', display: 'block' }}
       >
         <img src={product.image} alt={product.name} loading="lazy" />
         {product.badge && <span className="product-badge">{product.badge}</span>}
@@ -71,6 +73,7 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
           className="quick-view-btn"
           onClick={(e) => {
             e.stopPropagation();
+            e.preventDefault();
             onQuickView(product);
           }}
           aria-label={`Quick view for ${product.name}`}
@@ -78,17 +81,18 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
           <Eye size={14} />
           <span>Quick View</span>
         </button>
-      </div>
+      </Link>
 
       <div className="card-body">
         <div className="card-category">{product.categoryLabel}</div>
-        <h3
-          className="card-title"
-          onClick={() => onQuickView(product)}
-          style={{ cursor: 'pointer' }}
+        <Link
+          href={`/products/${product.id}`}
+          style={{ textDecoration: 'none', color: 'inherit' }}
         >
-          {product.name}
-        </h3>
+          <h3 className="card-title" style={{ cursor: 'pointer' }}>
+            {product.name}
+          </h3>
+        </Link>
         <p className="card-tagline">{product.tagline}</p>
 
         <div className="card-rating">

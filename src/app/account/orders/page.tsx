@@ -2,23 +2,49 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Package, ExternalLink, Calendar, Truck, CheckCircle2, Clock } from 'lucide-react';
+import { Package, ExternalLink, Calendar, Truck, CheckCircle2, Clock, MapPin } from 'lucide-react';
 import { formatPrice } from '@/lib/currency';
+import { useAuth } from '@/context/AuthContext';
 
 export default function AccountOrdersPage() {
+  const { user } = useAuth();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/orders')
+    const email = user?.email || '';
+    const emailParam = email ? `?email=${encodeURIComponent(email)}` : '';
+
+    fetch(`/api/orders${emailParam}`)
       .then((res) => res.json())
       .then((data) => {
-        const ords = data.data?.orders || data.orders || [];
+        let ords = ((data.data?.orders || data.orders || []) as any[]);
+
+        // Merge with client-side cached orders
+        if (typeof window !== 'undefined') {
+          const localUserOrders = email ? JSON.parse(localStorage.getItem(`aether_customer_orders_${email.toLowerCase()}`) || '[]') : [];
+          const allLocalOrders = JSON.parse(localStorage.getItem('aether_all_placed_orders') || '[]');
+          const combinedLocal = [...localUserOrders, ...allLocalOrders];
+
+          combinedLocal.forEach((loc) => {
+            if (loc && !ords.some((o) => o.id === loc.id || o.order_number === loc.order_number)) {
+              ords.unshift(loc);
+            }
+          });
+        }
+
         setOrders(ords);
       })
-      .catch((e) => console.warn(e))
+      .catch((e) => {
+        console.warn(e);
+        if (typeof window !== 'undefined') {
+          const localUserOrders = email ? JSON.parse(localStorage.getItem(`aether_customer_orders_${email.toLowerCase()}`) || '[]') : [];
+          const allLocalOrders = JSON.parse(localStorage.getItem('aether_all_placed_orders') || '[]');
+          setOrders([...localUserOrders, ...allLocalOrders]);
+        }
+      })
       .finally(() => setLoading(false));
-  }, []);
+  }, [user]);
 
   return (
     <div

@@ -53,13 +53,32 @@ function CheckoutContent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Auto-fill from signed-in user if available
+  // Auto-fill from signed-in user and saved addresses if available
   useEffect(() => {
     if (user) {
       const parts = (user.name || '').trim().split(' ');
       if (!firstName && parts[0]) setFirstName(parts[0]);
       if (!lastName && parts.slice(1).join(' ')) setLastName(parts.slice(1).join(' '));
       if (!customerEmail) setCustomerEmail(user.email);
+    }
+
+    if (typeof window !== 'undefined') {
+      const email = user?.email || '';
+      const savedAddrRaw =
+        localStorage.getItem(`aether_saved_addresses_${email.toLowerCase()}`) ||
+        localStorage.getItem('aether_latest_shipping_address');
+      if (savedAddrRaw) {
+        try {
+          const parsed = JSON.parse(savedAddrRaw);
+          const addr = Array.isArray(parsed) ? parsed[0] : parsed;
+          if (addr) {
+            if (!streetAddress && addr.streetLine1) setStreetAddress(addr.streetLine1);
+            if (!city && addr.city) setCity(addr.city);
+            if (!stateRegion && addr.stateRegion) setStateRegion(addr.stateRegion);
+            if (!customerPhone && addr.phone) setCustomerPhone(addr.phone);
+          }
+        } catch {}
+      }
     }
   }, [user]);
 
@@ -123,6 +142,62 @@ function CheckoutContent() {
       const guestAccessToken = data.data?.guestAccessToken || '';
       const emailSent = data.data?.email?.success ?? data.email?.success ?? false;
       const paystack = data.data?.paystack;
+
+      // 1. Immediately cache order and address in customer local storage
+      try {
+        const orderToStore = {
+          ...order,
+          items: cart,
+          order_items: cart,
+          shipping_address: orderPayload.shippingAddress,
+          customer_name: fullName,
+          customer_email: customerEmail,
+          created_at: new Date().toISOString(),
+        };
+
+        const orderEmail = (customerEmail || user?.email || '').toLowerCase().trim();
+        if (orderEmail) {
+          const userOrderKey = `aether_customer_orders_${orderEmail}`;
+          const currentOrders = JSON.parse(localStorage.getItem(userOrderKey) || '[]');
+          localStorage.setItem(userOrderKey, JSON.stringify([orderToStore, ...currentOrders.filter((o: any) => o.id !== order.id)]));
+        }
+
+        const allOrders = JSON.parse(localStorage.getItem('aether_all_placed_orders') || '[]');
+        localStorage.setItem('aether_all_placed_orders', JSON.stringify([orderToStore, ...allOrders.filter((o: any) => o.id !== order.id)]));
+
+        // 2. Automatically save shipping address for this customer
+        const savedAddressObj = {
+          id: `addr-${Date.now()}`,
+          fullName,
+          streetLine1: streetAddress,
+          streetLine2: '',
+          city,
+          stateRegion,
+          postalCode: '100001',
+          countryCode: country === 'Nigeria' ? 'NG' : 'US',
+          phone: customerPhone,
+          isDefault: true,
+          addressType: 'shipping',
+          createdAt: new Date().toISOString(),
+        };
+
+        const addressKey = `aether_saved_addresses_${orderEmail || 'default'}`;
+        const existingAddresses = JSON.parse(localStorage.getItem(addressKey) || '[]');
+        localStorage.setItem(
+          addressKey,
+          JSON.stringify([savedAddressObj, ...existingAddresses.filter((a: any) => a.streetLine1 !== streetAddress)])
+        );
+        localStorage.setItem('aether_latest_shipping_address', JSON.stringify(savedAddressObj));
+
+        // Persist to server address endpoint
+        fetch('/api/account/addresses', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(savedAddressObj),
+        }).catch(() => {});
+      } catch (cacheErr) {
+        console.warn('Failed to cache order and address locally', cacheErr);
+      }
 
       // If Paystack authorization URL is returned, redirect directly to Paystack payment gateway
       if (paystack?.authorizationUrl) {

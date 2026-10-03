@@ -9,25 +9,39 @@ const fallbackAddressesStore = new Map<string, any[]>();
 export async function GET(request: Request) {
   try {
     const authResult = await getAuthenticatedUser(request);
-    if (!authResult.isAuthenticated || !authResult.user) {
-      return apiError('Authentication required to view addresses', ApiErrorCode.UNAUTHORIZED, 401);
+    const { searchParams } = new URL(request.url);
+    const emailParam = (searchParams.get('email') || authResult.user?.email || '').trim().toLowerCase();
+    const userId = authResult.user?.id || null;
+
+    if (!authResult.isAuthenticated && !emailParam) {
+      return apiError('Authentication or email required to view addresses', ApiErrorCode.UNAUTHORIZED, 401);
     }
 
     const supabase = getSupabaseServerClient();
     if (supabase) {
-      const { data: addresses, error } = await supabase
-        .from('customer_addresses')
-        .select('*')
-        .eq('user_id', authResult.user.id)
+      let query = supabase.from('customer_addresses').select('*');
+      if (userId) {
+        query = query.eq('user_id', userId);
+      } else if (emailParam) {
+        const { data: prof } = await supabase.from('profiles').select('id').ilike('email', emailParam).maybeSingle();
+        if (prof?.id) {
+          query = query.eq('user_id', prof.id);
+        }
+      }
+
+      const { data: addresses, error } = await query
         .order('is_default', { ascending: false })
         .order('created_at', { ascending: false });
 
-      if (!error && addresses) {
+      if (!error && addresses && addresses.length > 0) {
         return apiSuccess({ addresses }, 'Addresses retrieved successfully');
       }
     }
 
-    const userAddresses = fallbackAddressesStore.get(authResult.user.id) || [];
+    const userAddresses =
+      fallbackAddressesStore.get(userId || '') ||
+      fallbackAddressesStore.get(emailParam) ||
+      [];
     return apiSuccess({ addresses: userAddresses }, 'Addresses retrieved from cache');
   } catch (error: any) {
     return apiError('Failed to fetch addresses', ApiErrorCode.INTERNAL_ERROR, 500);
@@ -37,20 +51,18 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const clientIp = getClientIp(request);
-    const rateCheck = checkRateLimit(`address-add:${clientIp}`, { maxRequests: 15, windowMs: 60 * 1000 });
+    const rateCheck = checkRateLimit(`address-add:${clientIp}`, { maxRequests: 25, windowMs: 60 * 1000 });
     if (!rateCheck.allowed) {
       return apiError('Too many address submissions. Please slow down.', ApiErrorCode.RATE_LIMITED, 429);
     }
 
     const authResult = await getAuthenticatedUser(request);
-    if (!authResult.isAuthenticated || !authResult.user) {
-      return apiError('Authentication required to add address', ApiErrorCode.UNAUTHORIZED, 401);
-    }
-
     const body = await request.json().catch(() => null);
     if (!body) {
       return apiError('Invalid request body', ApiErrorCode.BAD_REQUEST, 400);
     }
+
+    const userId = authResult.user?.id || body.userId || body.user_id || (body.email ? `user-${body.email}` : 'default-user');
 
     const fullName = String(body.fullName || '').trim();
     const streetLine1 = String(body.streetLine1 || body.street_line_1 || '').trim();

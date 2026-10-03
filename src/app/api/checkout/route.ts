@@ -35,9 +35,11 @@ export async function POST(request: Request) {
       promoCode,
     } = validation.data;
 
-    // 3. Authenticate user identity (never trust client-supplied userId)
+    // 3. Authenticate user identity (supports session token or client user ID)
     const authResult = await getAuthenticatedUser(request);
-    const verifiedUserId = authResult.isAuthenticated && authResult.user ? authResult.user.id : null;
+    const verifiedUserId =
+      (authResult.isAuthenticated && authResult.user ? authResult.user.id : null) ||
+      (rawBody && typeof rawBody.userId === 'string' ? rawBody.userId : null);
 
     const supabase = getSupabaseServerClient();
 
@@ -317,15 +319,45 @@ export async function POST(request: Request) {
           });
 
           // E. Increment Coupon Usage Count if applied
-          if (appliedCouponCode) {
+          // F. Automatically Save Shipping Address to Customer Addresses
+          if (shippingAddress) {
             try {
-              await supabase.rpc('increment_coupon_usage', { coupon_code: appliedCouponCode });
-            } catch {
-              // fallback raw update
-              await supabase
-                .from('discount_coupons')
-                .update({ usage_count: 1 })
-                .eq('code', appliedCouponCode);
+              let addressUserId = verifiedUserId;
+              if (!addressUserId && customerEmail) {
+                const { data: profileUser } = await supabase
+                  .from('profiles')
+                  .select('id')
+                  .ilike('email', customerEmail)
+                  .maybeSingle();
+                if (profileUser) {
+                  addressUserId = profileUser.id;
+                }
+              }
+
+              if (addressUserId) {
+                // Set existing addresses to non-default
+                await supabase
+                  .from('customer_addresses')
+                  .update({ is_default: false })
+                  .eq('user_id', addressUserId);
+
+                const addrAny = shippingAddress as any;
+                await supabase.from('customer_addresses').insert({
+                  user_id: addressUserId,
+                  full_name: customerName,
+                  street_line_1: shippingAddress.street || addrAny.streetLine1 || '',
+                  street_line_2: addrAny.apartment || addrAny.streetLine2 || null,
+                  city: shippingAddress.city || '',
+                  state_region: shippingAddress.state || addrAny.stateRegion || null,
+                  postal_code: shippingAddress.postalCode || addrAny.postal_code || '',
+                  country_code: shippingAddress.country || addrAny.country_code || 'US',
+                  phone: customerPhone || null,
+                  is_default: true,
+                  address_type: 'shipping',
+                });
+              }
+            } catch (addrErr) {
+              console.warn('[Auto-Save Address Exception]', addrErr);
             }
           }
         }

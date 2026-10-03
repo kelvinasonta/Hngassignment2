@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Product } from '@/lib/products-data';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { formatPrice } from '@/lib/currency';
-import { X, Check, Star, ShoppingBag, ShieldCheck, Truck, RotateCcw, Heart } from 'lucide-react';
+import { X, Check, Star, ShoppingBag, ShieldCheck, Truck, RotateCcw, Heart, ExternalLink } from 'lucide-react';
 
 interface ProductQuickViewProps {
   product: Product | null;
@@ -192,8 +193,34 @@ export default function ProductQuickView({ product, onClose }: ProductQuickViewP
                 </button>
               </div>
 
-              {/* Guarantees */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', textAlign: 'center', fontSize: '11px', color: 'var(--text-dim)' }}>
+                {/* Link to Dedicated Details Page */}
+                <Link
+                  href={`/products/${product.id}`}
+                  onClick={onClose}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    fontSize: '13px',
+                    color: 'var(--primary)',
+                    fontWeight: 700,
+                    padding: '11px 16px',
+                    borderRadius: 'var(--radius-md)',
+                    background: 'rgba(56, 189, 248, 0.08)',
+                    border: '1px solid rgba(56, 189, 248, 0.25)',
+                    marginTop: '16px',
+                    marginBottom: '18px',
+                    textDecoration: 'none',
+                    transition: 'var(--transition-fast)',
+                  }}
+                >
+                  <span>Open Dedicated Hardware Page</span>
+                  <ExternalLink size={14} />
+                </Link>
+
+                {/* Guarantees */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', textAlign: 'center', fontSize: '11px', color: 'var(--text-dim)' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
                   <Truck size={14} />
                   <span>Insured Express</span>

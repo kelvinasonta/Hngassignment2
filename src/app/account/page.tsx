@@ -26,23 +26,56 @@ export default function AccountOverviewPage() {
   });
 
   useEffect(() => {
-    // Fetch orders count
-    fetch('/api/orders')
+    const email = user?.email || '';
+    const emailParam = email ? `?email=${encodeURIComponent(email)}` : '';
+
+    // Fetch orders count & recent order
+    fetch(`/api/orders${emailParam}`)
       .then((res) => res.json())
       .then((data) => {
-        const orders = data.data?.orders || data.orders || [];
+        let orders = (data.data?.orders || data.orders || []) as any[];
+
+        // Merge with local storage orders
+        if (typeof window !== 'undefined') {
+          const localUserOrders = email ? JSON.parse(localStorage.getItem(`aether_customer_orders_${email.toLowerCase()}`) || '[]') : [];
+          const allLocalOrders = JSON.parse(localStorage.getItem('aether_all_placed_orders') || '[]');
+          const combined = [...localUserOrders, ...allLocalOrders];
+          combined.forEach((loc) => {
+            if (loc && !orders.some((o) => o.id === loc.id || o.order_number === loc.order_number)) {
+              orders.unshift(loc);
+            }
+          });
+        }
+
         setStats((prev) => ({ ...prev, ordersCount: orders.length }));
         if (orders.length > 0) {
           setRecentOrder(orders[0]);
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        if (typeof window !== 'undefined') {
+          const localUserOrders = email ? JSON.parse(localStorage.getItem(`aether_customer_orders_${email.toLowerCase()}`) || '[]') : [];
+          const allLocalOrders = JSON.parse(localStorage.getItem('aether_all_placed_orders') || '[]');
+          const combined = [...localUserOrders, ...allLocalOrders];
+          setStats((prev) => ({ ...prev, ordersCount: combined.length }));
+          if (combined.length > 0) setRecentOrder(combined[0]);
+        }
+      });
 
     // Fetch addresses count
-    fetch('/api/account/addresses')
+    fetch(`/api/account/addresses${emailParam}`)
       .then((res) => res.json())
       .then((data) => {
-        const addrs = data.data?.addresses || [];
+        let addrs = data.data?.addresses || [];
+        if (typeof window !== 'undefined') {
+          const localKey = `aether_saved_addresses_${email.toLowerCase()}`;
+          const stored = JSON.parse(localStorage.getItem(localKey) || '[]');
+          const latest = JSON.parse(localStorage.getItem('aether_latest_shipping_address') || 'null');
+          const allStored = [...stored, ...(latest ? [latest] : [])];
+          if (allStored.length > addrs.length) {
+            addrs = allStored;
+          }
+        }
         setStats((prev) => ({ ...prev, addressesCount: addrs.length }));
       })
       .catch(() => {});
@@ -55,7 +88,7 @@ export default function AccountOverviewPage() {
         setStats((prev) => ({ ...prev, reviewsCount: revs.length }));
       })
       .catch(() => {});
-  }, []);
+  }, [user]);
 
   return (
     <div>

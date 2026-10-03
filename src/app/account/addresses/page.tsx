@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { MapPin, Plus, Trash2, CheckCircle2, AlertCircle, Home, Building2, Star } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 interface Address {
   id: string;
@@ -19,6 +20,7 @@ interface Address {
 }
 
 export default function AddressesPage() {
+  const { user } = useAuth();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -40,11 +42,44 @@ export default function AddressesPage() {
   const fetchAddresses = async () => {
     try {
       setIsLoading(true);
-      const res = await fetch('/api/account/addresses');
+      const email = user?.email || '';
+      const emailParam = email ? `?email=${encodeURIComponent(email)}` : '';
+      const res = await fetch(`/api/account/addresses${emailParam}`);
       const data = await res.json();
-      if (res.ok && data.success) {
-        setAddresses(data.data?.addresses || []);
+      let list: Address[] = (res.ok && data.success && data.data?.addresses) ? [...data.data.addresses] : [];
+
+      // Merge with cached addresses used during checkout
+      if (typeof window !== 'undefined') {
+        const localKey = `aether_saved_addresses_${email.toLowerCase()}`;
+        const stored = JSON.parse(localStorage.getItem(localKey) || '[]');
+        const defaultStored = JSON.parse(localStorage.getItem('aether_saved_addresses_default') || '[]');
+        const latest = JSON.parse(localStorage.getItem('aether_latest_shipping_address') || 'null');
+        const allLocal = [...stored, ...defaultStored, ...(latest ? [latest] : [])];
+
+        allLocal.forEach((loc: any) => {
+          if (!loc || (!loc.streetLine1 && !loc.street_line_1)) return;
+          const street = loc.streetLine1 || loc.street_line_1 || '';
+          const cty = loc.city || '';
+          const formatted: Address = {
+            id: loc.id || `loc-${Math.random()}`,
+            full_name: loc.fullName || loc.full_name || 'Customer',
+            street_line_1: street,
+            street_line_2: loc.streetLine2 || loc.street_line_2 || null,
+            city: cty,
+            state_region: loc.stateRegion || loc.state_region || null,
+            postal_code: loc.postalCode || loc.postal_code || '',
+            country_code: loc.countryCode || loc.country_code || 'US',
+            phone: loc.phone || null,
+            is_default: Boolean(loc.isDefault || loc.is_default),
+            address_type: loc.addressType || loc.address_type || 'shipping',
+          };
+          if (!list.some((a) => a.street_line_1 === street && a.city === cty)) {
+            list.unshift(formatted);
+          }
+        });
       }
+
+      setAddresses(list);
     } catch {
       // silently handle
     } finally {
@@ -54,7 +89,7 @@ export default function AddressesPage() {
 
   useEffect(() => {
     fetchAddresses();
-  }, []);
+  }, [user]);
 
   const handleAddAddress = async (e: React.FormEvent) => {
     e.preventDefault();
