@@ -10,9 +10,11 @@ export async function GET(request: Request) {
   const next = searchParams.get('next') || '/';
 
   if (code) {
-    const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    const DEFAULT_SUPABASE_URL = 'https://xlygzpdhsykigztuusvf.supabase.co';
+    const DEFAULT_SUPABASE_ANON_KEY = 'sb_publishable_afEXNNWa6tYr3DcdaakAqA_O89RY269';
+    const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || DEFAULT_SUPABASE_URL;
     const supabaseUrl = rawUrl.replace(/\/rest\/v1\/?$/, '').replace(/\/+$/, '');
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || DEFAULT_SUPABASE_ANON_KEY;
 
     if (supabaseUrl && supabaseAnonKey) {
       const supabase = createClient(supabaseUrl, supabaseAnonKey);

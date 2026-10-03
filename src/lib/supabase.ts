@@ -1,9 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
 
-const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const DEFAULT_SUPABASE_URL = 'https://xlygzpdhsykigztuusvf.supabase.co';
+const DEFAULT_SUPABASE_ANON_KEY = 'sb_publishable_afEXNNWa6tYr3DcdaakAqA_O89RY269';
+
+const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || DEFAULT_SUPABASE_URL;
 // Automatically strip trailing /rest/v1 or slashes if copied from API docs
 const supabaseUrl = rawUrl.replace(/\/rest\/v1\/?$/, '').replace(/\/+$/, '');
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || DEFAULT_SUPABASE_ANON_KEY;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseAnonKey;
 
 export const isSupabaseConfigured = (): boolean => {
