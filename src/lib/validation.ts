@@ -48,10 +48,10 @@ export function validateCheckoutPayload(body: any): {
   if (!addr || typeof addr !== 'object') {
     errors.shippingAddress = 'Shipping address is required';
   } else {
-    const street = String(addr.street || addr.address1 || '').trim();
+    const street = String(addr.street || addr.address1 || addr.address || '').trim();
     const city = String(addr.city || '').trim();
-    const postalCode = String(addr.postalCode || addr.zip || '').trim();
-    const country = String(addr.country || 'United States').trim();
+    const postalCode = String(addr.postalCode || addr.zip || '100001').trim();
+    const country = String(addr.country || 'Nigeria').trim();
 
     if (!street) errors['shippingAddress.street'] = 'Street address is required';
     if (!city) errors['shippingAddress.city'] = 'City is required';
