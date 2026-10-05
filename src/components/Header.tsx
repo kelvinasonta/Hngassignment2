@@ -23,7 +23,6 @@ import {
   ShieldCheck,
   ShieldAlert,
   Search,
-  Smartphone,
 } from 'lucide-react';
 import AuthModal from './AuthModal';
 import NotificationCenter from './NotificationCenter';
@@ -93,48 +92,10 @@ export default function Header() {
                   {c.label}
                 </Link>
               ))}
-              <Link
-                href="/app"
-                className="nav-item"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  color: 'var(--primary)',
-                  fontWeight: 800,
-                  background: 'rgba(56, 189, 248, 0.08)',
-                  border: '1px solid rgba(56, 189, 248, 0.25)',
-                  padding: '4px 10px',
-                  borderRadius: '99px',
-                }}
-              >
-                <Smartphone size={13} /> App Layout
-              </Link>
             </nav>
 
             {/* Right Actions */}
             <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <Link
-                href="/app"
-                title="Open Mobile App Layout"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '5px',
-                  background: 'rgba(56, 189, 248, 0.1)',
-                  border: '1px solid rgba(56, 189, 248, 0.3)',
-                  color: 'var(--primary)',
-                  fontSize: '11px',
-                  fontWeight: 800,
-                  padding: '6px 12px',
-                  borderRadius: 'var(--radius-full)',
-                  textDecoration: 'none',
-                }}
-              >
-                <Smartphone size={14} />
-                <span>App Mode</span>
-              </Link>
-
               {/* Compare Matrix Trigger */}
               <button
                 className="btn-icon"
