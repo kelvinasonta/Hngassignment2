@@ -20,12 +20,14 @@ export default function FloatingCartButton() {
     initialPosX: number;
     initialPosY: number;
     hasMoved: boolean;
+    startTime: number;
   }>({
     startX: 0,
     startY: 0,
     initialPosX: 0,
     initialPosY: 0,
     hasMoved: false,
+    startTime: 0,
   });
 
   const buttonRef = useRef<HTMLDivElement | null>(null);
@@ -34,14 +36,14 @@ export default function FloatingCartButton() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const defaultMarginX = 85;
-    const defaultMarginY = 100;
-    const defaultX = Math.max(20, window.innerWidth - defaultMarginX);
-    const defaultY = Math.max(20, window.innerHeight - defaultMarginY);
+    const defaultMarginX = window.innerWidth <= 640 ? 76 : 85;
+    const defaultMarginY = window.innerWidth <= 640 ? 96 : 100;
+    const defaultX = Math.max(16, window.innerWidth - defaultMarginX);
+    const defaultY = Math.max(16, window.innerHeight - defaultMarginY);
 
     try {
       const savedPos = localStorage.getItem('aether_floating_cart_pos');
-      if (savedPos) {
+      if (savedPos && window.innerWidth > 640) {
         const parsed = JSON.parse(savedPos);
         const clampedX = Math.min(Math.max(12, parsed.x), window.innerWidth - 75);
         const clampedY = Math.min(Math.max(12, parsed.y), window.innerHeight - 75);
@@ -92,10 +94,15 @@ export default function FloatingCartButton() {
       initialPosX: position?.x || 0,
       initialPosY: position?.y || 0,
       hasMoved: false,
+      startTime: Date.now(),
     };
 
     setIsDragging(true);
-    e.currentTarget.setPointerCapture(e.pointerId);
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch (err) {
+      // capture fallback
+    }
   };
 
   // Pointer Move
@@ -104,9 +111,10 @@ export default function FloatingCartButton() {
 
     const deltaX = e.clientX - dragRef.current.startX;
     const deltaY = e.clientY - dragRef.current.startY;
+    const distance = Math.hypot(deltaX, deltaY);
 
-    // Movement threshold to distinguish click vs drag (4px)
-    if (!dragRef.current.hasMoved && (Math.abs(deltaX) > 4 || Math.abs(deltaY) > 4)) {
+    // Movement threshold: require at least 12px to distinguish intentional drag from a finger tap
+    if (!dragRef.current.hasMoved && distance > 12) {
       dragRef.current.hasMoved = true;
     }
 
@@ -124,7 +132,10 @@ export default function FloatingCartButton() {
 
   // Pointer Up
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isDragging) return;
+    const elapsed = Date.now() - dragRef.current.startTime;
+    const deltaX = e.clientX - dragRef.current.startX;
+    const deltaY = e.clientY - dragRef.current.startY;
+    const distance = Math.hypot(deltaX, deltaY);
 
     try {
       e.currentTarget.releasePointerCapture(e.pointerId);
@@ -134,19 +145,30 @@ export default function FloatingCartButton() {
 
     setIsDragging(false);
 
-    // If dragged, save final position to localStorage
-    if (dragRef.current.hasMoved) {
-      if (position) {
-        try {
-          localStorage.setItem('aether_floating_cart_pos', JSON.stringify(position));
-        } catch (err) {
-          // ignore write errors
-        }
-      }
-    } else {
-      // Was a pure click/tap -> open the cart drawer!
+    // Quick tap or small movement is unequivocally a click/tap
+    if (!dragRef.current.hasMoved || distance < 12 || elapsed < 350) {
+      dragRef.current.hasMoved = false;
       setIsCartOpen(true);
+      return;
     }
+
+    // If genuinely dragged, save final position to localStorage
+    if (position && typeof window !== 'undefined' && window.innerWidth > 640) {
+      try {
+        localStorage.setItem('aether_floating_cart_pos', JSON.stringify(position));
+      } catch (err) {
+        // ignore write errors
+      }
+    }
+  };
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (dragRef.current.hasMoved) {
+      dragRef.current.hasMoved = false;
+      return;
+    }
+    setIsCartOpen(true);
   };
 
   if (!position) return null;
@@ -157,7 +179,20 @@ export default function FloatingCartButton() {
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
-      onPointerCancel={() => setIsDragging(false)}
+      onPointerCancel={(e) => {
+        setIsDragging(false);
+        const elapsed = Date.now() - dragRef.current.startTime;
+        if (!dragRef.current.hasMoved && elapsed < 350) {
+          setIsCartOpen(true);
+        }
+      }}
+      onClick={handleClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          setIsCartOpen(true);
+        }
+      }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{
@@ -167,7 +202,7 @@ export default function FloatingCartButton() {
         zIndex: 85,
         touchAction: 'none',
         userSelect: 'none',
-        cursor: isDragging ? 'grabbing' : 'grab',
+        cursor: isDragging ? 'grabbing' : 'pointer',
         transition: isDragging ? 'none' : 'box-shadow 0.25s ease, transform 0.2s ease',
         transform: isDragging ? 'scale(1.08)' : isHovered ? 'scale(1.04)' : 'scale(1)',
       }}

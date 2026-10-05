@@ -23,10 +23,19 @@ import { Product } from '@/lib/products-data';
 type MobileTab = 'discover' | 'catalog' | 'cart' | 'account';
 
 export default function MobileAppLayoutPage() {
-  const { cart, addToCart, removeFromCart, updateQuantity, subtotal, itemCount, clearCart, isInCart } = useCart();
+  const { cart, addToCart, removeFromCart, updateQuantity, subtotal, itemCount, clearCart, isInCart, isCartOpen, setIsCartOpen } = useCart();
   const { user, signInWithGoogle, signInWithCredentials, signUpWithCredentials, signOut } = useAuth();
 
   const [activeTab, setActiveTab] = useState<MobileTab>('discover');
+
+  useEffect(() => {
+    if (isCartOpen) {
+      setActiveTab('cart');
+      setShowWelcome(false);
+      setSelectedProduct(null);
+      setIsCheckingOut(false);
+    }
+  }, [isCartOpen]);
   const [frameMode, setFrameMode] = useState<'iphone' | 'fullscreen'>('iphone');
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1159,7 +1168,10 @@ export default function MobileAppLayoutPage() {
               cursor: 'pointer',
               zIndex: 900,
             }}
-            onClick={() => setActiveTab('cart')}
+            onClick={() => {
+              setActiveTab('cart');
+              setIsCartOpen(true);
+            }}
           >
             <ShoppingBag size={20} color="var(--primary)" />
             {itemCount > 0 && (
