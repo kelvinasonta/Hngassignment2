@@ -1203,5 +1203,15 @@ button {
   animation: cartShockwave 0.75s ease-out forwards;
 }
 
+/* Stationary Floating Cart Action Button (FAB) */
+.floating-cart-fab {
+  bottom: 28px;
+  right: 28px;
+}
 
-
+@media (max-width: 768px) {
+  .floating-cart-fab {
+    bottom: 84px;
+    right: 18px;
+  }
+}
