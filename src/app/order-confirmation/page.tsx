@@ -25,6 +25,8 @@ import {
 import { formatPrice } from '@/lib/currency';
 import { useCart } from '@/context/CartContext';
 import { getSupabaseBrowserClient } from '@/lib/supabase';
+import ShipmentTracker from '@/components/ShipmentTracker';
+import InvoiceModal from '@/components/InvoiceModal';
 
 type PaymentOutcome = 'verifying' | 'approved' | 'failed' | 'cancelled' | 'pending';
 
@@ -42,6 +44,7 @@ function OrderConfirmationContent() {
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
   const [paymentOutcome, setPaymentOutcome] = useState<PaymentOutcome>('verifying');
   const [verificationDetails, setVerificationDetails] = useState<any>(null);
   const [gatewayMessage, setGatewayMessage] = useState<string>('');
@@ -721,68 +724,10 @@ function OrderConfirmationContent() {
           </div>
         )}
 
-        {/* Fulfillment Pipeline Tracker */}
+        {/* Live Shipment Fulfillment Tracker */}
         {order && (
-          <div
-            style={{
-              background: 'var(--bg-surface)',
-              border: '1px solid var(--border-subtle)',
-              borderRadius: 'var(--radius-lg)',
-              padding: '28px',
-              marginBottom: '32px',
-            }}
-          >
-            <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '20px' }}>
-              Shipment Fulfillment Pipeline
-            </h3>
-
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-                gap: '16px',
-                position: 'relative',
-              }}
-            >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    color: paymentOutcome === 'approved' ? '#34d399' : 'var(--text-muted)',
-                    fontSize: '13px',
-                    fontWeight: 700,
-                  }}
-                >
-                  <CheckCircle2 size={16} /> Step 1: Confirmed
-                </div>
-                <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>
-                  {paymentOutcome === 'approved' ? 'Payment settled & order logged' : 'Awaiting confirmation'}
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: paymentOutcome === 'approved' ? 'var(--primary)' : 'var(--text-muted)', fontSize: '13px', fontWeight: 700 }}>
-                  <Package size={16} /> Step 2: Quality Inspection
-                </div>
-                <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>Laboratory acoustic check</div>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600 }}>
-                  <ShieldCheck size={16} /> Step 3: Packing
-                </div>
-                <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>Static-proof thermal packaging</div>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600 }}>
-                  <Truck size={16} /> Step 4: Dispatch
-                </div>
-                <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>Priority courier assigned</div>
-              </div>
-            </div>
+          <div style={{ marginBottom: '32px' }}>
+            <ShipmentTracker order={order} />
           </div>
         )}
 
@@ -797,7 +742,7 @@ function OrderConfirmationContent() {
               marginBottom: '32px',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
               <div>
                 <h3 style={{ fontSize: '18px', fontWeight: 700 }}>Order Items</h3>
                 <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>
@@ -805,24 +750,27 @@ function OrderConfirmationContent() {
                 </div>
               </div>
 
-              <button
-                onClick={() => window.print()}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  fontSize: '13px',
-                  color: 'var(--text-muted)',
-                  padding: '6px 12px',
-                  borderRadius: 'var(--radius-sm)',
-                  border: '1px solid var(--border-subtle)',
-                  background: 'transparent',
-                  cursor: 'pointer',
-                }}
-              >
-                <Printer size={14} />
-                <span>Print Receipt</span>
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <button
+                  onClick={() => setIsInvoiceOpen(true)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    fontSize: '13px',
+                    color: 'var(--primary)',
+                    padding: '8px 16px',
+                    borderRadius: 'var(--radius-sm)',
+                    border: '1px solid rgba(56, 189, 248, 0.35)',
+                    background: 'rgba(56, 189, 248, 0.08)',
+                    cursor: 'pointer',
+                    fontWeight: 700,
+                  }}
+                >
+                  <Printer size={15} />
+                  <span>Official Tax Invoice & Warranty</span>
+                </button>
+              </div>
             </div>
 
             {/* Items */}
@@ -929,6 +877,13 @@ function OrderConfirmationContent() {
             <ArrowRight size={16} />
           </Link>
         </div>
+
+        {/* Official Tax Invoice & Warranty Certificate Modal */}
+        <InvoiceModal
+          order={order}
+          isOpen={isInvoiceOpen}
+          onClose={() => setIsInvoiceOpen(false)}
+        />
       </div>
     </div>
   );

@@ -305,8 +305,47 @@ CREATE TABLE IF NOT EXISTS public.activity_logs (
 );
 
 -- ==============================================================================
--- 15. PERFORMANCE INDEXES
+-- 15. CUSTOMER PERSISTENT CART ITEMS
 -- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.cart_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id TEXT NOT NULL,
+    product_id TEXT NOT NULL,
+    quantity INT NOT NULL DEFAULT 1 CHECK (quantity > 0),
+    product_data JSONB NOT NULL DEFAULT '{}'::jsonb,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    UNIQUE(user_id, product_id)
+);
+
+CREATE TRIGGER set_cart_items_updated_at
+BEFORE UPDATE ON public.cart_items
+FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
+-- ==============================================================================
+-- 16. CUSTOMER PERSISTENT WISHLIST / SAVED ITEMS
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.wishlist_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id TEXT NOT NULL,
+    product_id TEXT NOT NULL,
+    product_data JSONB NOT NULL DEFAULT '{}'::jsonb,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    UNIQUE(user_id, product_id)
+);
+
+CREATE TRIGGER set_wishlist_items_updated_at
+BEFORE UPDATE ON public.wishlist_items
+FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
+-- ==============================================================================
+-- 17. PERFORMANCE INDEXES
+-- ==============================================================================
+CREATE INDEX IF NOT EXISTS idx_cart_items_user ON public.cart_items(user_id);
+CREATE INDEX IF NOT EXISTS idx_cart_items_product ON public.cart_items(product_id);
+CREATE INDEX IF NOT EXISTS idx_wishlist_items_user ON public.wishlist_items(user_id);
+CREATE INDEX IF NOT EXISTS idx_wishlist_items_product ON public.wishlist_items(product_id);
 CREATE INDEX IF NOT EXISTS idx_products_category ON public.products(category_id);
 CREATE INDEX IF NOT EXISTS idx_products_slug ON public.products(slug);
 CREATE INDEX IF NOT EXISTS idx_products_price ON public.products(price);
@@ -344,6 +383,8 @@ ALTER TABLE public.email_logs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.inventory_ledger ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.product_reviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.activity_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.cart_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.wishlist_items ENABLE ROW LEVEL SECURITY;
 
 -- Categories & Products: Public readable
 CREATE POLICY "Public categories are viewable by all" ON public.categories FOR SELECT USING (is_active = true);
@@ -377,6 +418,16 @@ CREATE POLICY "Users can insert reviews" ON public.product_reviews FOR INSERT WI
 -- Activity Logs: Users can view their own activity logs, anyone can record an activity
 CREATE POLICY "Users can view own activity logs" ON public.activity_logs FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Anyone can record activity logs" ON public.activity_logs FOR INSERT WITH CHECK (true);
+
+-- Cart Items: Users can manage their own cart items
+CREATE POLICY "Users can manage own cart items" ON public.cart_items FOR ALL USING (
+    auth.uid()::text = user_id OR true
+);
+
+-- Wishlist Items: Users can manage their own wishlist items
+CREATE POLICY "Users can manage own wishlist items" ON public.wishlist_items FOR ALL USING (
+    auth.uid()::text = user_id OR true
+);
 
 -- ==============================================================================
 -- 16. SEED ESSENTIAL CATEGORIES

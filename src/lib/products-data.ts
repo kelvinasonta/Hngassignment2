@@ -7,7 +7,7 @@ export interface Product {
   id: string;
   name: string;
   tagline: string;
-  category: 'watch' | 'speaker' | 'headphone' | 'smartphone' | 'laptops';
+  category: 'watch' | 'speaker' | 'headphone' | 'smartphone' | 'laptops' | 'smart-home' | 'living';
   categoryLabel: string;
   price: number;
   rating: number;
@@ -283,5 +283,121 @@ export const INITIAL_PRODUCTS: Product[] = [
       { name: 'Midnight Deep Blue', hex: '#172033' },
     ],
     stock: 20,
+  },
+  {
+    id: 'prod-smart-light-ambient',
+    name: 'Aether Aura Ambient Smart Lantern',
+    tagline: 'Brushed Champagne Brass • Fluted Smoked Glass',
+    category: 'smart-home',
+    categoryLabel: 'Smart Home',
+    price: 245,
+    rating: 4.92,
+    reviewsCount: 118,
+    image: '/assets/images/smart_light_ambient.jpg',
+    gallery: [
+      '/assets/images/smart_light_ambient.jpg',
+      '/assets/images/hero_gadgets.jpg',
+    ],
+    badge: 'New Arrival',
+    description: 'Precision-engineered circadian smart ambient lantern with fluted acoustic smoked glass, weighted brass stepless potentiometer, and wireless Apple HomeKit/Matter connectivity.',
+    overview: 'The Aura Smart Lantern harmonizes circadian biology with tactile physical interaction. Rotating the knurled solid brass dial glides the light engine smoothly from a 2,200K warm candle glow to a 6,500K daylight spectrum, synced automatically to atmospheric time-of-day cues.',
+    materials: 'Solid Champagne Brass pedestal, anti-glare fluted borosilicate smoked glass cylinder, braided silicone power conduit.',
+    warranty: '2-Year Global Concierge Warranty with certified 50,000-hour LED diode calibration.',
+    features: [
+      'Natural Circadian Sunrise/Sunset Lighting',
+      'Stepless Tactile Knurled Brass Dimming Potentiometer',
+      'Thread & Matter Multi-Platform Smart Ecosystem Sync',
+      'Cinema-Grade 2,200K – 6,500K Ultra-High CRI 98 Spectrum',
+    ],
+    specs: {
+      'Illumination': '1,200 Lumens Peak, 2,200K to 6,500K Tunable White',
+      'Color Rendering': 'CRI 98+ (Cinema Reference Accuracy)',
+      'Smart Protocols': 'Matter, Apple Home, Google Home, Home Assistant via Thread',
+      'Power Input': '45W USB-C PD, Integrated LiFePO4 battery (8-hour portable mode)',
+      'Dimensions': '110mm diameter x 280mm height',
+      'Weight': '1.45 kg',
+    },
+    colors: [
+      { name: 'Champagne Brass', hex: '#d4af37' },
+      { name: 'Matte Obsidian', hex: '#1c1d22' },
+    ],
+    stock: 35,
+  },
+  {
+    id: 'prod-workspace-display-32',
+    name: 'Aether Studio Vision 32 Pro Display',
+    tagline: '6K OLED Workspace • Counterbalanced Arm',
+    category: 'living',
+    categoryLabel: 'Studio Living',
+    price: 1899,
+    rating: 4.97,
+    reviewsCount: 86,
+    image: '/assets/images/smart_workspace_display.jpg',
+    gallery: [
+      '/assets/images/smart_workspace_display.jpg',
+      '/assets/images/laptop_air.jpg',
+    ],
+    badge: 'Studio Reference',
+    description: '32-inch 6K Retinal OLED architectural workspace monitor with integrated aerospace aluminum counterbalanced articulated arm, studio color grading LUTs, and single-cable 140W USB4 Thunderbolt link.',
+    overview: 'Architected for multidisciplinary creators, architects, and software engineers who treat their desk as an ergonomic sanctuary. The counterbalanced gas-spring arm floats the 6K panel effortlessly with zero desk clamp clutter, while nano-textured glass eliminates ambient reflections without compromising black levels.',
+    materials: 'CNC-milled Aerospace 6063 Aluminum articulating arm, zero-bezel matte anti-reflective micro-textured glass, internal thermal vapor chamber.',
+    warranty: '3-Year Professional Studio Zero-Dead-Pixel & Panel Burn-in Guarantee.',
+    features: [
+      '6K (6016 x 3384) True 10-Bit OLED Panel',
+      'Zero-Gravity Counterbalanced Articulation',
+      'Single-Cable 140W Thunderbolt 4 Power Delivery',
+      'Hardware Calibrated 100% DCI-P3 & Adobe RGB',
+    ],
+    specs: {
+      'Resolution': '6016 x 3384 pixels (218 ppi, 6K Retinal)',
+      'Peak Luminance': '1,600 nits HDR Peak, 1,000 nits full-screen sustain',
+      'Contrast Ratio': '1,000,000:1 True Infinite Black',
+      'Refresh Rate': '120Hz ProMotion Variable Refresh',
+      'I/O Ports': '1x Thunderbolt 4 (140W PD), 3x USB-C 10Gbps, 1x HDMI 2.1',
+      'Arm Range': '340° horizontal rotation, 180mm vertical elevation, 90° pivot',
+    },
+    colors: [
+      { name: 'Space Gray Aluminum', hex: '#4a4d52' },
+      { name: 'Silver Anodized', hex: '#d8dce2' },
+    ],
+    stock: 18,
+  },
+  {
+    id: 'prod-acoustic-air-purifier',
+    name: 'Aura Cleanroom Smart Air Purifier',
+    tagline: 'Sandstone Ceramic • Acoustic Dampening',
+    category: 'smart-home',
+    categoryLabel: 'Smart Home',
+    price: 380,
+    rating: 4.88,
+    reviewsCount: 142,
+    image: '/assets/images/acoustic_air_purifier.jpg',
+    gallery: [
+      '/assets/images/acoustic_air_purifier.jpg',
+      '/assets/images/speaker_nordic.jpg',
+    ],
+    badge: 'Whisper Quiet',
+    description: 'Architectural smart air purifier crafted with a sandstone ceramic cylindrical upper housing, acoustic dampening charcoal fabric, and medical-grade True HEPA H13 filtration operating at a near-silent 17dB.',
+    overview: 'The Aura Cleanroom purifier transforms indoor air sanitation into an acoustic and visual art form. Designed specifically for audio mastering suites, bedroom sanctuaries, and executive offices, its dual centrifugal impeller channels laminar airflow through activated carbon matrices with inaudible motor resonance.',
+    materials: 'Matte Sandstone Ceramic upper cowl, sound-absorbing acoustic Kvadrat fabric wrap, recycled aluminum base pedestal.',
+    warranty: '2-Year Cleanroom Performance Warranty with annual filter replenishment club.',
+    features: [
+      'Whisper-Quiet 17dB Acoustic Dampening Operation',
+      'Medical-Grade True HEPA H13 & Active Carbon Matrix',
+      'Real-Time Laser PM2.5 & VOC Atmospheric Telemetry',
+      'Subtle Ambient Light Ring Air Quality Readout',
+    ],
+    specs: {
+      'Coverage Area': 'Up to 850 sq. ft. (2 exchanges per hour)',
+      'Filtration Efficiency': '99.97% down to 0.1 microns (Smoke, VOCs, Allergens)',
+      'Noise Floor': '17 dB(A) Night Mode (Studio Recording Safe)',
+      'Sensors': 'High-Precision Laser Particle Sensor, Gas/VOC Sensor, Humidity & Temp',
+      'Connectivity': 'Wi-Fi 6, Matter & Thread Protocol',
+    },
+    colors: [
+      { name: 'Sandstone & Charcoal', hex: '#c5baa6' },
+      { name: 'Pure Chalk White', hex: '#f0ede6' },
+    ],
+    stock: 40,
   },
 ];

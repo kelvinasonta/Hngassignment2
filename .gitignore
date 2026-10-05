@@ -37,3 +37,9 @@ yarn-error.log*
 *.sln
 *.sw?
 tsconfig.tsbuildinfo
+
+/supabase.txt
+/mobile
+/supabase
+/AI_MASTER_BLUEPRINT.md
+/aim.txt

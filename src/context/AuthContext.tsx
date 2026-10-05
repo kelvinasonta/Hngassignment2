@@ -22,6 +22,10 @@ interface AuthContextType {
   signInAdminUser: () => void;
   signOut: () => Promise<void>;
   isSupabaseLive: boolean;
+  isAuthModalOpen: boolean;
+  authModalMode: 'signin' | 'signup';
+  openAuthModal: (mode?: 'signin' | 'signup') => void;
+  closeAuthModal: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -71,7 +75,18 @@ async function triggerWelcomeEmail(
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>('signin');
   const isSupabaseLive = isSupabaseConfigured();
+
+  const openAuthModal = (mode: 'signin' | 'signup' = 'signin') => {
+    setAuthModalMode(mode);
+    setIsAuthModalOpen(true);
+  };
+
+  const closeAuthModal = () => {
+    setIsAuthModalOpen(false);
+  };
 
   useEffect(() => {
     // Check local storage for mock/demo user
@@ -230,37 +245,66 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-          },
-        },
+      // 1. Create and auto-confirm user via Web API so account works across Web and Mobile
+      const regRes = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, name: fullName }),
       });
+      const regJson = await regRes.json();
 
-      if (error) {
-        return { success: false, error: error.message };
+      if (!regRes.ok || !regJson.success) {
+        // Fallback to standard client-side signup if API fails
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: fullName,
+            },
+          },
+        });
+
+        if (error) {
+          return { success: false, error: error.message };
+        }
+
+        triggerWelcomeEmail(email, fullName, data.user?.id, 'credentials');
+        const confirmationRequired = Boolean(data.user && !data.session);
+
+        if (data.user && data.session) {
+          const u: User = {
+            id: data.user.id,
+            email: data.user.email || email,
+            name: fullName || data.user.email?.split('@')[0] || 'Customer',
+            provider: 'email',
+          };
+          setUser(u);
+          recordUserActivity('auth.signup.credentials', { email, fullName }, u.id);
+        }
+
+        return { success: true, confirmationRequired };
       }
 
-      // Traditional signup succeeded — dispatch welcome email
-      triggerWelcomeEmail(email, fullName, data.user?.id, 'credentials');
+      // 2. User is auto-confirmed in Supabase: sign them in immediately to establish browser session
+      const signInRes = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-      const confirmationRequired = Boolean(data.user && !data.session);
-
-      if (data.user && data.session) {
+      if (signInRes.data?.user) {
         const u: User = {
-          id: data.user.id,
-          email: data.user.email || email,
-          name: fullName || data.user.email?.split('@')[0] || 'Customer',
+          id: signInRes.data.user.id,
+          email: signInRes.data.user.email || email,
+          name: fullName || email.split('@')[0],
+          avatarUrl: signInRes.data.user.user_metadata?.avatar_url,
           provider: 'email',
         };
         setUser(u);
         recordUserActivity('auth.signup.credentials', { email, fullName }, u.id);
       }
 
-      return { success: true, confirmationRequired };
+      return { success: true, confirmationRequired: false };
     } catch (err: any) {
       return { success: false, error: err.message };
     }
@@ -317,6 +361,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signInAdminUser,
         signOut,
         isSupabaseLive,
+        isAuthModalOpen,
+        authModalMode,
+        openAuthModal,
+        closeAuthModal,
       }}
     >
       {children}

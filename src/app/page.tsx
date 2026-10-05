@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { Product, INITIAL_PRODUCTS } from '@/lib/products-data';
 import ProductCard from '@/components/ProductCard';
 import ProductQuickView from '@/components/ProductQuickView';
+import HomeImageBanner from '@/components/HomeImageBanner';
 import { formatPrice } from '@/lib/currency';
 import {
   Sparkles,
@@ -81,7 +82,9 @@ function HomePageContent() {
   }, [selectedCategory, searchQuery]);
 
   const categories = [
-    { id: 'all', label: 'All Hardware' },
+    { id: 'all', label: 'All Collections' },
+    { id: 'smart-home', label: 'Smart Home' },
+    { id: 'living', label: 'Studio Living' },
     { id: 'smartphone', label: 'Smartphones' },
     { id: 'laptops', label: 'Computing' },
     { id: 'headphone', label: 'Audiophile' },
@@ -91,9 +94,10 @@ function HomePageContent() {
 
   const materials = [
     { id: 'all', label: 'All Materials' },
-    { id: 'titanium', label: 'Titanium' },
+    { id: 'brass', label: 'Champagne Brass' },
     { id: 'ceramic', label: 'Sandstone Ceramic' },
-    { id: 'aluminum', label: 'Anodized Aluminum' },
+    { id: 'aluminum', label: 'Aerospace Aluminum' },
+    { id: 'titanium', label: 'Titanium' },
     { id: 'beryllium', label: 'Pure Beryllium' },
   ];
 
@@ -153,91 +157,8 @@ function HomePageContent() {
         <span>Limited Launch Offer: Use promo code <strong>WELCOME10</strong> for 10% off or <strong>TECH20</strong> for 20% off at checkout!</span>
       </div>
 
-      {/* Hero Section */}
-      <section className="hero-section">
-        <div className="container">
-          <div className="hero-grid">
-            <div>
-              <div className="hero-tag">
-                <Sparkles size={14} />
-                <span>Next-Gen Audio & Personal Computing</span>
-              </div>
-              <h1 className="hero-title">
-                Authentic Hardware. <br />
-                <span className="text-gradient">Engineered to Perfection.</span>
-              </h1>
-              <p className="hero-desc">
-                Discover uncompromised precision devices designed with aerospace titanium, beryllium acoustics, and sapphire glass. Backed by comprehensive hardware warranties, insured express dispatch, and seamless secure checkout.
-              </p>
-              <div className="hero-actions">
-                <a href="#products" className="btn-primary">
-                  <span>Explore Catalog</span>
-                  <ArrowRight size={18} />
-                </a>
-                <Link href="/checkout" className="btn-secondary">
-                  <span>Direct Checkout</span>
-                </Link>
-              </div>
-
-              {/* Trust Indicators */}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '24px',
-                  marginTop: '40px',
-                  paddingTop: '28px',
-                  borderTop: '1px solid var(--border-subtle)',
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: 'var(--font-heading)' }}>
-                    100%
-                  </div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>Authentic Gear</div>
-                </div>
-                <div style={{ width: '1px', height: '28px', background: 'var(--border-subtle)' }} />
-                <div>
-                  <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: 'var(--font-heading)' }}>
-                    2-Year
-                  </div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>Global Warranty</div>
-                </div>
-                <div style={{ width: '1px', height: '28px', background: 'var(--border-subtle)' }} />
-                <div>
-                  <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: 'var(--font-heading)' }}>
-                    24h
-                  </div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>Insured Dispatch</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Hero Image Card */}
-            <div className="hero-image-card">
-              <img
-                src="/assets/images/hero_gadgets.jpg"
-                alt="AETHER High-end Hardware Lineup"
-              />
-              <div className="hero-floating-badge">
-                <div>
-                  <div style={{ fontSize: '11px', color: 'var(--primary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>
-                    Featured Collection
-                  </div>
-                  <div style={{ fontSize: '16px', fontWeight: 700 }}>AETHER Quantum & Studio Flagships</div>
-                </div>
-                <a
-                  href="#products"
-                  className="btn-primary"
-                  style={{ padding: '8px 16px', fontSize: '12px', borderRadius: 'var(--radius-sm)' }}
-                >
-                  View
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Hero Showcase Banner with Rotating Image Carousel */}
+      <HomeImageBanner />
 
       {/* Main Catalog Section */}
       <section id="products" style={{ padding: '40px 0 80px' }}>

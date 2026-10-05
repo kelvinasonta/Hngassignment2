@@ -1,5 +1,6 @@
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { INITIAL_PRODUCTS, Product } from '@/lib/products-data';
+import { getAllMergedProducts } from '@/lib/products-store';
 import { apiSuccess, apiError, ApiErrorCode } from '@/lib/api-response';
 
 export async function GET(
@@ -46,7 +47,7 @@ export async function GET(
     }
 
     if (!product) {
-      product = INITIAL_PRODUCTS.find((p) => p.id === id) || null;
+      product = getAllMergedProducts().find((p) => p.id === id) || null;
     }
 
     if (!product) {

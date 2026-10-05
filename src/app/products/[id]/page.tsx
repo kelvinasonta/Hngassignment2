@@ -31,9 +31,11 @@ import {
   CheckCircle2,
   ExternalLink,
   ChevronRight,
+  Scale,
 } from 'lucide-react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import { useCompare } from '@/context/CompareContext';
+import ExpressCheckoutModal from '@/components/ExpressCheckoutModal';
+import ProductReviewsTab from '@/components/ProductReviewsTab';
 
 export default function DedicatedProductDetailsPage() {
   const params = useParams();
@@ -48,9 +50,11 @@ export default function DedicatedProductDetailsPage() {
   const [activeTab, setActiveTab] = useState<'overview' | 'specs' | 'materials' | 'reviews'>('overview');
   const [justAdded, setJustAdded] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [isExpressOpen, setIsExpressOpen] = useState(false);
 
-  const { addToCart } = useCart();
+  const { addToCart, isInCart, getItemQuantity, setIsCartOpen } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
+  const { addToCompare, isInCompare } = useCompare();
 
   useEffect(() => {
     // 1. Try finding in hardcoded catalog first for immediate render
@@ -95,37 +99,29 @@ export default function DedicatedProductDetailsPage() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <Header />
-        <main style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
-            <div className="spinner" style={{ margin: '0 auto 16px' }} />
-            <p>Loading precision hardware specifications...</p>
-          </div>
-        </main>
-        <Footer />
+      <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
+          <div className="loading-spinner" style={{ margin: '0 auto 16px' }} />
+          <p>Loading precision hardware specifications...</p>
+        </div>
       </div>
     );
   }
 
   if (!product) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <Header />
-        <main style={{ flex: 1, padding: '120px 20px', textAlign: 'center' }}>
-          <div className="container" style={{ maxWidth: '540px' }}>
-            <Cpu size={48} style={{ margin: '0 auto 16px', color: 'var(--text-dim)' }} />
-            <h1 style={{ fontSize: '28px', fontWeight: 800, marginBottom: '12px' }}>Device Not Found</h1>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '28px' }}>
-              The hardware unit you are looking for is either discontinued, out of stock, or has been re-indexed.
-            </p>
-            <Link href="/#products" className="btn-primary" style={{ display: 'inline-flex' }}>
-              <ArrowLeft size={16} />
-              <span>Browse Catalog</span>
-            </Link>
-          </div>
-        </main>
-        <Footer />
+      <div style={{ padding: '120px 20px', textAlign: 'center' }}>
+        <div className="container" style={{ maxWidth: '540px' }}>
+          <Cpu size={48} style={{ margin: '0 auto 16px', color: 'var(--text-dim)' }} />
+          <h1 style={{ fontSize: '28px', fontWeight: 800, marginBottom: '12px' }}>Device Not Found</h1>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '28px' }}>
+            The hardware unit you are looking for is either discontinued, out of stock, or has been re-indexed.
+          </p>
+          <Link href="/#products" className="btn-primary" style={{ display: 'inline-flex' }}>
+            <ArrowLeft size={16} />
+            <span>Browse Catalog</span>
+          </Link>
+        </div>
       </div>
     );
   }
@@ -141,8 +137,7 @@ export default function DedicatedProductDetailsPage() {
   };
 
   const handleBuyNow = () => {
-    addToCart(product, quantity);
-    router.push('/checkout');
+    setIsExpressOpen(true);
   };
 
   const handleShare = () => {
@@ -154,11 +149,8 @@ export default function DedicatedProductDetailsPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Header />
-
-      <main style={{ flex: 1, padding: '32px 0 100px' }}>
-        <div className="container">
+    <div style={{ padding: '32px 0 100px' }}>
+      <div className="container">
           {/* Breadcrumb Navigation */}
           <nav
             aria-label="Breadcrumb"
@@ -538,39 +530,82 @@ export default function DedicatedProductDetailsPage() {
                     </button>
                   </div>
 
-                  {/* Add to Bag Button */}
-                  <button
-                    onClick={handleAddToCart}
-                    className="btn-primary"
-                    style={{
-                      flex: 1,
-                      minWidth: '180px',
-                      background: justAdded ? '#34d399' : undefined,
-                      borderColor: justAdded ? '#34d399' : undefined,
-                      color: justAdded ? '#07090e' : undefined,
-                    }}
-                  >
-                    {justAdded ? <Check size={18} /> : <ShoppingBag size={18} />}
-                    <span>{justAdded ? 'Added to Bag' : 'Add to Bag'}</span>
-                  </button>
+                  {/* Add to Bag Button / In Cart Status */}
+                  {product && isInCart(product.id) ? (
+                    <button
+                      key="pdp-in-bag-btn"
+                      onClick={() => setIsCartOpen(true)}
+                      className="btn-secondary"
+                      style={{
+                        flex: 1,
+                        minWidth: '180px',
+                        background: 'rgba(56, 189, 248, 0.15)',
+                        borderColor: 'rgba(56, 189, 248, 0.5)',
+                        color: 'var(--primary)',
+                        fontWeight: 700,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                      }}
+                      title="Item is already in your hardware bag — click to view"
+                    >
+                      <Check size={18} />
+                      <span>In Bag ({getItemQuantity(product.id)}) • View Bag</span>
+                    </button>
+                  ) : (
+                    <button
+                      key="pdp-add-bag-btn"
+                      onClick={handleAddToCart}
+                      className="btn-primary"
+                      style={{
+                        flex: 1,
+                        minWidth: '180px',
+                        background: justAdded ? '#34d399' : undefined,
+                        borderColor: justAdded ? '#34d399' : undefined,
+                        color: justAdded ? '#07090e' : undefined,
+                      }}
+                    >
+                      {justAdded ? <Check size={18} /> : <ShoppingBag size={18} />}
+                      <span>{justAdded ? 'Added to Bag' : 'Add to Bag'}</span>
+                    </button>
+                  )}
                 </div>
 
-                {/* Direct Buy Now Button */}
-                <button
-                  onClick={handleBuyNow}
-                  className="btn-secondary"
-                  style={{
-                    width: '100%',
-                    justifyContent: 'center',
-                    background: 'rgba(56, 189, 248, 0.08)',
-                    borderColor: 'rgba(56, 189, 248, 0.4)',
-                    color: 'var(--primary)',
-                    fontWeight: 700,
-                  }}
-                >
-                  <Zap size={18} />
-                  <span>Express Direct Checkout</span>
-                </button>
+                {/* Direct Buy Now Button & Compare Matrix Button */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '10px' }}>
+                  <button
+                    onClick={handleBuyNow}
+                    className="btn-secondary"
+                    style={{
+                      justifyContent: 'center',
+                      background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(251, 191, 36, 0.2))',
+                      borderColor: 'rgba(251, 191, 36, 0.4)',
+                      color: '#fbbf24',
+                      fontWeight: 700,
+                      padding: '12px',
+                    }}
+                  >
+                    <Zap size={18} fill="#fbbf24" />
+                    <span>1-Click Express Buy</span>
+                  </button>
+
+                  <button
+                    onClick={() => addToCompare(product)}
+                    className="btn-secondary"
+                    style={{
+                      justifyContent: 'center',
+                      background: isInCompare(product.id) ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255, 255, 255, 0.04)',
+                      borderColor: isInCompare(product.id) ? 'var(--primary)' : 'var(--border-subtle)',
+                      color: isInCompare(product.id) ? 'var(--primary)' : 'var(--text-main)',
+                      fontWeight: 600,
+                      padding: '12px',
+                    }}
+                  >
+                    <Scale size={18} />
+                    <span>{isInCompare(product.id) ? 'In Matrix' : 'Compare Specs'}</span>
+                  </button>
+                </div>
               </div>
 
               {/* Trust & Guarantee Strip */}
@@ -754,58 +789,12 @@ export default function DedicatedProductDetailsPage() {
             )}
 
             {activeTab === 'reviews' && (
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                  <div>
-                    <h3 style={{ fontSize: '20px', fontWeight: 800, fontFamily: 'var(--font-heading)' }}>
-                      Customer Hardware Audits
-                    </h3>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>
-                      Overall rating of <strong>{product.rating.toFixed(1)} / 5.0</strong> based on {product.reviewsCount} verified purchase evaluations.
-                    </p>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  {[
-                    {
-                      author: 'Marcus Vance, Principal Audio Architect',
-                      rating: 5,
-                      date: '2 weeks ago',
-                      comment: 'Uncompromising build quality. The tactile resistance of the dial and thermal dissipation of the unibody chassis exceed studio benchmark standards.',
-                    },
-                    {
-                      author: 'Elena Rostova, Industrial Hardware Evaluator',
-                      rating: 5,
-                      date: '1 month ago',
-                      comment: 'The acoustic tuning is surgical. No synthetic bass elevation — just razor-sharp transients and expansive spatial imaging.',
-                    },
-                  ].map((rev, idx) => (
-                    <div
-                      key={idx}
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.02)',
-                        border: '1px solid var(--border-subtle)',
-                        borderRadius: 'var(--radius-md)',
-                        padding: '20px',
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                        <span style={{ fontWeight: 700, fontSize: '14px' }}>{rev.author}</span>
-                        <span style={{ color: 'var(--text-dim)', fontSize: '12px' }}>{rev.date}</span>
-                      </div>
-                      <div style={{ display: 'flex', gap: '4px', color: '#fbbf24', marginBottom: '10px' }}>
-                        {[...Array(rev.rating)].map((_, s) => (
-                          <Star key={s} size={14} fill="currentColor" />
-                        ))}
-                      </div>
-                      <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.6 }}>
-                        "{rev.comment}"
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <ProductReviewsTab
+                product={product}
+                onReviewsChange={(newCount, newRating) => {
+                  setProduct((prev) => (prev ? { ...prev, reviewsCount: newCount, rating: newRating } : null));
+                }}
+              />
             )}
           </div>
 
@@ -884,9 +873,16 @@ export default function DedicatedProductDetailsPage() {
             </div>
           )}
         </div>
-      </main>
 
-      <Footer />
+        {product && (
+          <ExpressCheckoutModal
+            product={product}
+            selectedColor={selectedColor}
+            quantity={quantity}
+            isOpen={isExpressOpen}
+            onClose={() => setIsExpressOpen(false)}
+          />
+        )}
     </div>
   );
 }

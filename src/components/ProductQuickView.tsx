@@ -14,7 +14,7 @@ interface ProductQuickViewProps {
 }
 
 export default function ProductQuickView({ product, onClose }: ProductQuickViewProps) {
-  const { addToCart } = useCart();
+  const { addToCart, isInCart, getItemQuantity, setIsCartOpen } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
@@ -149,27 +149,53 @@ export default function ProductQuickView({ product, onClose }: ProductQuickViewP
                   </button>
                 </div>
 
-                <button
-                  onClick={handleAdd}
-                  className="btn-primary"
-                  style={{
-                    flex: 1,
-                    background: added ? '#34d399' : undefined,
-                    color: added ? '#07090e' : undefined,
-                  }}
-                >
-                  {added ? (
-                    <>
-                      <Check size={18} />
-                      <span>Added to Bag!</span>
-                    </>
-                  ) : (
-                    <>
-                      <ShoppingBag size={18} />
-                      <span>Add to Bag ({formatPrice(product.price * quantity)})</span>
-                    </>
-                  )}
-                </button>
+                {isInCart(product.id) ? (
+                  <button
+                    key="qv-in-bag-btn"
+                    onClick={() => {
+                      onClose();
+                      setIsCartOpen(true);
+                    }}
+                    className="btn-secondary"
+                    style={{
+                      flex: 1,
+                      background: 'rgba(56, 189, 248, 0.15)',
+                      borderColor: 'rgba(56, 189, 248, 0.5)',
+                      color: 'var(--primary)',
+                      fontWeight: 700,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    <Check size={18} />
+                    <span>In Bag ({getItemQuantity(product.id)}) • View Bag</span>
+                  </button>
+                ) : (
+                  <button
+                    key="qv-add-cart-btn"
+                    onClick={handleAdd}
+                    className="btn-primary"
+                    style={{
+                      flex: 1,
+                      background: added ? '#34d399' : undefined,
+                      color: added ? '#07090e' : undefined,
+                    }}
+                  >
+                    {added ? (
+                      <>
+                        <Check size={18} />
+                        <span>Added to Bag!</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingBag size={18} />
+                        <span>Add to Bag ({formatPrice(product.price * quantity)})</span>
+                      </>
+                    )}
+                  </button>
+                )}
 
                 {/* Wishlist Button */}
                 <button

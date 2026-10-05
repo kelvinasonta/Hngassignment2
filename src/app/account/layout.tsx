@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import {
   User as UserIcon,
@@ -13,12 +13,20 @@ import {
   LogOut,
   ChevronRight,
   Layers,
-  Heart
+  Heart,
 } from 'lucide-react';
 
 export default function AccountLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { user, signOut } = useAuth();
+  const router = useRouter();
+  const { user, loading, signOut, openAuthModal } = useAuth();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace('/');
+      openAuthModal('signin');
+    }
+  }, [loading, user, router, openAuthModal]);
 
   const navItems = [
     { label: 'Overview', href: '/account', icon: Layers },
@@ -29,6 +37,27 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
     { label: 'Security & Password', href: '/account/security', icon: ShieldCheck },
     { label: 'My Reviews', href: '/account/reviews', icon: Star },
   ];
+
+  // 1. Loading / Redirecting Guard
+  if (loading || !user) {
+    return (
+      <div style={{ minHeight: '70vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div
+            className="loading-spinner"
+            style={{
+              width: '44px',
+              height: '44px',
+              margin: '0 auto 16px',
+            }}
+          />
+          <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+            {!user ? 'Redirecting to sign-in...' : 'Loading account portal...'}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ padding: '40px 0 80px' }}>

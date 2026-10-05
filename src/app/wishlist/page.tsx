@@ -5,22 +5,20 @@ import Link from 'next/link';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCart } from '@/context/CartContext';
 import { formatPrice } from '@/lib/currency';
-import { Heart, ShoppingBag, ArrowLeft, Trash2, Star, Sparkles } from 'lucide-react';
+import { Heart, ShoppingBag, ArrowLeft, Trash2, Star, Sparkles, Check } from 'lucide-react';
 
 export default function WishlistPage() {
   const { wishlist, removeFromWishlist, clearWishlist } = useWishlist();
-  const { addToCart, setIsCartOpen } = useCart();
+  const { addToCart, isInCart, getItemQuantity, setIsCartOpen } = useCart();
 
   const handleMoveAllToCart = () => {
     wishlist.forEach((product) => {
       addToCart(product, 1);
     });
-    setIsCartOpen(true);
   };
 
   const handleAddToCart = (product: any) => {
     addToCart(product, 1);
-    setIsCartOpen(true);
   };
 
   return (
@@ -283,20 +281,43 @@ export default function WishlistPage() {
                       </div>
                     </div>
 
-                    <button
-                      onClick={() => handleAddToCart(product)}
-                      className="btn-primary"
-                      style={{
-                        padding: '10px 16px',
-                        fontSize: '13px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                      }}
-                    >
-                      <ShoppingBag size={15} />
-                      <span>Add to Bag</span>
-                    </button>
+                    {isInCart(product.id) ? (
+                      <button
+                        key="wishlist-in-bag-btn"
+                        onClick={() => setIsCartOpen(true)}
+                        className="btn-secondary"
+                        style={{
+                          padding: '10px 16px',
+                          fontSize: '13px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          background: 'rgba(56, 189, 248, 0.15)',
+                          borderColor: 'rgba(56, 189, 248, 0.5)',
+                          color: 'var(--primary)',
+                          fontWeight: 700,
+                        }}
+                      >
+                        <Check size={15} />
+                        <span>In Bag ({getItemQuantity(product.id)})</span>
+                      </button>
+                    ) : (
+                      <button
+                        key="wishlist-add-bag-btn"
+                        onClick={() => handleAddToCart(product)}
+                        className="btn-primary"
+                        style={{
+                          padding: '10px 16px',
+                          fontSize: '13px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                        }}
+                      >
+                        <ShoppingBag size={15} />
+                        <span>Add to Bag</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

@@ -37,6 +37,7 @@
   ],
   "exclude": [
     "node_modules",
-    "legacy_static"
+    "legacy_static",
+    "mobile"
   ]
 }

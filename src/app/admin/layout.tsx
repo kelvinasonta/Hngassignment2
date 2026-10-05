@@ -18,10 +18,11 @@ import {
 
 const ADMIN_NAV = [
   { label: 'Executive Metrics', href: '/admin', icon: LayoutDashboard },
-  { label: 'Orders & Fulfillment', href: '/admin/orders', icon: Package },
   { label: 'Hardware & Stock', href: '/admin/products', icon: Boxes },
+  { label: 'Orders & Fulfillment', href: '/admin/orders', icon: Package },
   { label: 'Promotions & Coupons', href: '/admin/coupons', icon: Tag },
   { label: 'Audit & Security Logs', href: '/admin/logs', icon: ShieldAlert },
+  { label: 'Admin Profile', href: '/admin/profile', icon: UserCheck },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

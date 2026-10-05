@@ -1,27 +1,48 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { X, Sparkles, CheckCircle2, ShieldCheck, AlertCircle, Mail, Lock, User as UserIcon, ArrowRight } from 'lucide-react';
 
 interface AuthModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen?: boolean;
+  onClose?: () => void;
+  initialMode?: 'signin' | 'signup';
 }
 
-export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
-  const { signInWithGoogle, signInWithCredentials, signUpWithCredentials, isSupabaseLive } = useAuth();
-  
-  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+export default function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps = {}) {
+  const {
+    signInWithGoogle,
+    signInWithCredentials,
+    signUpWithCredentials,
+    signInDemoUser,
+    signInAdminUser,
+    isSupabaseLive,
+    isAuthModalOpen: contextIsOpen,
+    closeAuthModal: contextOnClose,
+    authModalMode: contextMode,
+  } = useAuth();
+
+  const modalIsOpen = isOpen !== undefined ? isOpen : contextIsOpen;
+  const handleClose = onClose !== undefined ? onClose : contextOnClose;
+
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>(initialMode || contextMode || 'signin');
+
+  useEffect(() => {
+    if (contextMode) {
+      setAuthMode(contextMode);
+    }
+  }, [contextMode]);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
-  
+
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!isOpen) return null;
+  if (!modalIsOpen) return null;
 
   const handleGoogleSignIn = async () => {
     setIsSubmitting(true);
@@ -33,7 +54,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     if (!result.success && result.error) {
       setErrorMsg(result.error);
     } else {
-      onClose();
+      handleClose();
     }
   };
 
@@ -49,7 +70,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       if (!res.success) {
         setErrorMsg(res.error || 'Invalid email or password.');
       } else {
-        onClose();
+        handleClose();
       }
     } else {
       if (password.length < 6) {
@@ -65,14 +86,14 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         if (res.confirmationRequired) {
           setSuccessMsg('Account created! Please check your email to confirm your account, or sign in.');
         } else {
-          onClose();
+          handleClose();
         }
       }
     }
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={handleClose}>
       <div className="modal-card" style={{ maxWidth: '480px' }} onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -97,7 +118,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>OAuth 2.0 & Secure Database Credentials</p>
             </div>
           </div>
-          <button onClick={onClose} className="btn-icon" style={{ width: '32px', height: '32px' }}>
+          <button onClick={handleClose} className="btn-icon" style={{ width: '32px', height: '32px' }}>
             <X size={16} />
           </button>
         </div>

@@ -1,5 +1,6 @@
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { INITIAL_PRODUCTS, Product } from '@/lib/products-data';
+import { getAllMergedProducts } from '@/lib/products-store';
 import { apiSuccess, apiError, ApiErrorCode } from '@/lib/api-response';
 
 export async function GET(request: Request) {
@@ -19,12 +20,12 @@ export async function GET(request: Request) {
       }
       const { data, error } = await dbQuery;
       if (!error && data && data.length > 0) {
-        products = data.map((item) => ({
+        const dbProducts = data.map((item) => ({
           id: item.id,
           name: item.name,
           tagline: item.tagline || '',
           category: item.category_id || item.category,
-          categoryLabel: item.category_label,
+          categoryLabel: item.category_label || item.category,
           price: Number(item.price),
           rating: Number(item.rating || 5),
           reviewsCount: Number(item.reviews_count || 0),
@@ -34,11 +35,16 @@ export async function GET(request: Request) {
           features: Array.isArray(item.features) ? item.features : [],
           stock: item.stock ?? 50,
         }));
+
+        const existingIds = new Set(dbProducts.map((p) => p.id));
+        const allLocal = getAllMergedProducts();
+        const missingInitial = allLocal.filter((p) => !existingIds.has(p.id));
+        products = [...dbProducts, ...missingInitial];
       } else {
-        products = INITIAL_PRODUCTS;
+        products = getAllMergedProducts();
       }
     } else {
-      products = INITIAL_PRODUCTS;
+      products = getAllMergedProducts();
     }
 
     // Filter in-memory if needed
